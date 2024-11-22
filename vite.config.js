@@ -11,7 +11,7 @@ export default defineConfig({
     server: {
         host: '0.0.0.0',
         hmr: {
-            host: '192.168.0.51'
+            host: '127.0.0.1'
         },
         watch: {
             usePolling: true,

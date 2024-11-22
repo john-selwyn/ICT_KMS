@@ -83,6 +83,9 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:text-[#FFD700]">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('entries.approves')" :active="request()->routeIs('entries.approves')" class="text-white hover:text-[#FFD700]">
+                {{ __('Approve Entries') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

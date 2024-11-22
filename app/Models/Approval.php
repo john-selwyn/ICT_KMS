@@ -16,6 +16,7 @@ class Approval extends Model
         'description',
         'category_id',
         'attachment',
+        'youtube_url',
         'thumbnail',
     ];
 

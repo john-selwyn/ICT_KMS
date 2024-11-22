@@ -8,6 +8,8 @@ use App\Http\Controllers\EntriesController;
 use App\Http\Controllers\knowledge_baseController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\New_EntryController;
+use App\Http\Controllers\ApprovalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +37,7 @@ Route::get('/category/{category}', [CategoryController::class, 'showItems'])->na
 
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/category_list', [DashboardController::class, 'list'])->name('dashboards');
 
 
 //Items
@@ -44,17 +47,41 @@ Route::get('items/{category}/{item_id?}', [DashboardController::class, 'showItem
 
 
 
+//New Entries Controller
+Route::get('new-entry/create', [New_EntryController::class, 'create'])->name('new_entry.create');
+Route::post('new-entry/store', [New_EntryController::class, 'new_store'])->name('new_entry.store');
+Route::get('new-entry/show', [New_EntryController::class, 'showEntries'])->name('new_entry.show');
 
+
+
+//Entries pending view
+Route::get('/entries/pending', [EntriesController::class,'entries'])->name('entries.pending');
+Route::get('/entries/pending{entry}', [EntriesController::class, 'show_pending'])->name('show.pending'); // Show Pending Item
 
 
 //Entries Controller
 Route::get('/entries', [EntriesController::class,'approve_entries'])->name('entries.approves');
 Route::post('/entries/approve/{id}', [EntriesController::class, 'approve'])->name('entries.approve');
-Route::get('/entries/pending', [EntriesController::class,'entries'])->name('entries.pending');
+
 
 Route::group(['middleware' => ['admin']], function () {
 Route::get('/entries/create', [EntriesController::class,'create'])->name('entries.create');
 });
+
+//Approval Controller
+
+Route::get('/entries/{entry}', [ApprovalController::class, 'show'])->name('entries.show');
+Route::get('/entries/{entry}/edit', [ApprovalController::class, 'edit'])->name('entriess.edit');
+Route::put('/entries/{entry}', [ApprovalController::class, 'update'])->name('entriess.update');
+Route::delete('/entries/{entry}', [ApprovalController::class, 'destroy'])->name('entriesss.delete');
+
+
+
+
+
+
+
+Route::get('/search', [EntriesController::class,'search'])->name('entries.search');
 
 Route::post('/entries/create', [EntriesController::class,'store'])->name('entries.store');
 Route::get('/entries/{entries}/edit', [EntriesController::class,'edit'])->name('entries.edit');
@@ -81,9 +108,13 @@ Route::delete('/entries/{entries}/delete', [EntriesController::class,'delete'])-
 
 
 
+//Edit user
+
+Route::post('/users/{user}/promote', [UserController::class, 'promote'])->name('users.promote');
+Route::post('/users/{user}/demote', [UserController::class, 'demote'])->name('users.demote');
 
 
-//USER
+//Profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

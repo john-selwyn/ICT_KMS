@@ -6,326 +6,271 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Entry</title>
         <style>
+            :root {
+                --primary-blue: #0f2c59;
+                --border-gray: #e5e7eb;
+                --text-gray: #6b7280;
+                --background-white: #ffffff;
+            }
+
             body {
-                font-family: 'Arial', sans-serif;
-                background-color: #f7f9fc;
-                margin: 0;
-                padding: 20px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
+                background-color: #f8fafc;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             }
 
             .container {
-                background-color: white;
-                border-radius: 8px;
-                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-                padding: 40px;
-                max-width: 600px;
+                max-width: 48rem;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .form-card {
+                background-color: var(--background-white);
+                border-radius: 0.5rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                padding: 2rem;
+            }
+
+            .page-title {
+                color: var(--primary-blue);
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: 2rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                display: block;
+                color: #374151;
+                font-size: 0.875rem;
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-input,
+            .form-select {
                 width: 100%;
+                padding: 0.625rem;
+                border: 1px solid var(--border-gray);
+                border-radius: 0.375rem;
+                font-size: 0.875rem;
+                color: #1f2937;
+                transition: border-color 0.2s;
             }
 
-            h1 {
-                text-align: center;
-                margin-bottom: 20px;
-                font-size: 24px;
-                color: #333;
+            .form-input:focus,
+            .form-select:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
             }
 
-            form {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            input, textarea, select {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ddd;
-                border-radius: 6px;
-                font-size: 16px;
-            }
-
-            textarea {
+            textarea.form-input {
+                min-height: 100px;
                 resize: vertical;
             }
 
-            .button {
-                padding: 12px;
-                background-color: #007bff;
-                color: white;
-                font-size: 16px;
-                border: none;
-                border-radius: 6px;
+            .upload-zone {
+                border: 2px dashed var(--border-gray);
+                border-radius: 0.375rem;
+                padding: 2rem;
+                text-align: center;
                 cursor: pointer;
-                transition: background-color 0.3s ease;
+                transition: all 0.2s;
+            }
+
+            .upload-zone:hover {
+                border-color: #3b82f6;
+                background-color: #f8fafc;
+            }
+
+            .upload-icon {
+                margin-bottom: 0.75rem;
+                color: var(--text-gray);
+            }
+
+            .upload-text {
+                color: var(--text-gray);
+                font-size: 0.875rem;
+            }
+
+            .file-info {
+                margin-top: 1rem;
+                padding: 0.75rem;
+                background-color: #f8fafc;
+                border-radius: 0.375rem;
+                font-size: 0.875rem;
+            }
+
+            .submit-button {
                 width: 100%;
-                text-align: center;
-            }
-
-            .button:hover {
-                background-color: #0056b3;
-            }
-
-            .button:disabled {
-                background-color: #cccccc;
-                cursor: not-allowed;
-            }
-
-            .error-messages {
-                color: red;
-                list-style-type: none;
-                padding: 0;
-                margin-bottom: 15px;
-            }
-
-            /* File Upload Styles */
-            .file-upload-container {
-                border: 2px dashed #ddd;
-                padding: 20px;
-                border-radius: 6px;
-                text-align: center;
-                position: relative;
-                transition: border-color 0.3s ease;
-            }
-
-            .file-upload-container.dragover {
-                border-color: #007bff;
-                background-color: rgba(0, 123, 255, 0.05);
-            }
-
-            .file-input-wrapper {
-                position: relative;
-                overflow: hidden;
-                display: inline-block;
-            }
-
-            .file-input-wrapper input[type="file"] {
-                position: absolute;
-                left: 0;
-                top: 0;
-                opacity: 0;
-                cursor: pointer;
-                width: 100%;
-                height: 100%;
-            }
-
-            .file-upload-button {
-                display: inline-block;
-                padding: 8px 16px;
-                background-color: #007bff;
+                padding: 0.75rem;
+                background-color: var(--primary-blue);
                 color: white;
-                border-radius: 4px;
-                cursor: pointer;
-                margin-bottom: 10px;
-            }
-
-            /* Loader Styles */
-            .loader-container {
-                display: none;
-                position: relative;
-                margin-top: 15px;
-            }
-
-            .loader-bar {
-                height: 4px;
-                background-color: #f0f0f0;
-                border-radius: 2px;
-                overflow: hidden;
-            }
-
-            .loader-progress {
-                height: 100%;
-                width: 0;
-                background-color: #007bff;
-                transition: width 0.3s ease;
-            }
-
-            .loader-text {
-                text-align: center;
-                margin-top: 8px;
-                font-size: 14px;
-                color: #666;
-            }
-
-            /* File Preview Styles */
-            .file-preview {
-                display: none;
-                margin-top: 15px;
-                padding: 10px;
-                background-color: #f8f9fa;
-                border-radius: 4px;
-            }
-
-            .file-preview-content {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .file-preview-icon {
-                width: 40px;
-                height: 40px;
-                background-color: #e9ecef;
-                border-radius: 4px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .file-preview-info {
-                flex-grow: 1;
-            }
-
-            .file-preview-name {
-                font-weight: bold;
-                margin-bottom: 4px;
-            }
-
-            .file-preview-size {
-                font-size: 12px;
-                color: #666;
-            }
-
-            .file-preview-remove {
-                color: #dc3545;
-                cursor: pointer;
-                padding: 4px 8px;
                 border: none;
-                background: none;
-                font-size: 14px;
+                border-radius: 0.375rem;
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s;
             }
 
-            @media (max-width: 768px) {
+            .submit-button:hover {
+                background-color: #1a365d;
+            }
+
+            .error-list {
+                background-color: #fee2e2;
+                border: 1px solid #fecaca;
+                border-radius: 0.375rem;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .error-list li {
+                color: #dc2626;
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+
+            @media (max-width: 640px) {
                 .container {
-                    padding: 20px;
+                    margin: 1rem auto;
+                }
+
+                .form-card {
+                    padding: 1.5rem;
                 }
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <h1>Create New Entry</h1>
+            <div class="form-card">
+                <h1 class="page-title">Create New Entry</h1>
 
-            @if($errors->any())
-                <ul class="error-messages">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            @endif
+                @if($errors->any())
+                    <ul class="error-list">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                @endif
 
-            <form method="POST" action="{{ route('entries.store') }}" enctype="multipart/form-data" id="entryForm">
-                @csrf
-                <input type="text" name="title" placeholder="Entry Title" required>
-                
-                <textarea name="description" placeholder="Description" rows="4" required></textarea>
-                
-                <select name="category_id">
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-                
-                <div class="file-upload-container" id="dropZone">
-                    <div class="file-input-wrapper">
-                        <div class="file-upload-button">Choose File</div>
-                        <input type="file" name="attachment" id="fileInput" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx">
-                    </div>
-                    <div class="upload-text">or drag and drop file here</div>
+                <form method="POST" action="{{ route('entries.store') }}" enctype="multipart/form-data">
+                    @csrf
                     
-                    <!-- File Preview -->
-                    <div class="file-preview" id="filePreview">
-                        <div class="file-preview-content">
-                            <div class="file-preview-icon">📎</div>
-                            <div class="file-preview-info">
-                                <div class="file-preview-name"></div>
-                                <div class="file-preview-size"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="title">Title</label>
+                        <input type="text" id="title" name="title" class="form-input" placeholder="Enter title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Description</label>
+                        <textarea id="description" name="description" class="form-input" placeholder="Enter description" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="category">Category</label>
+                        <select id="category" name="category_id" class="form-select">
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Attachment</label>
+                        <div class="upload-zone" id="dropZone">
+                            <div class="upload-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                                </svg>
                             </div>
-                            <button type="button" class="file-preview-remove">✕</button>
+                            <div class="upload-text">Drag and drop a file here or click to browse</div>
+                            <input type="file" name="attachment" id="fileInput" class="hidden" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" style="display: none;">
+                            <div class="file-info" id="fileInfo" style="display: none;">
+                                <div class="file-name"></div>
+                                <div class="file-size"></div>
+                            </div>
+
+                            
                         </div>
                     </div>
 
-                    <!-- Loader -->
-                    <div class="loader-container" id="loaderContainer">
-                        <div class="loader-bar">
-                            <div class="loader-progress"></div>
-                        </div>
-                        <div class="loader-text">Uploading... <span class="upload-percentage">0%</span></div>
+                    <div class="form-group">
+                        <label for="youtube_url">YouTube URL</label>
+                        <input type="url" name="youtube_url" id="youtube_url" class="form-control" placeholder="https://youtube.com/..." value="{{ old('youtube_url', $entries->youtube_url ?? '') }}">
                     </div>
-                </div>
-                
-                <button class="button" type="submit" id="submitButton">Submit</button>
-            </form>
+                    
+
+                    <button type="submit" class="submit-button">Create Entry</button>
+                </form>
+            </div>
         </div>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const dropZone = document.getElementById('dropZone');
                 const fileInput = document.getElementById('fileInput');
-                const filePreview = document.getElementById('filePreview');
-                const loaderContainer = document.getElementById('loaderContainer');
-                const loaderProgress = document.querySelector('.loader-progress');
-                const uploadPercentage = document.querySelector('.upload-percentage');
-                const submitButton = document.getElementById('submitButton');
-                const form = document.getElementById('entryForm');
-    
-                // Drag and drop handlers remain the same...
+                const fileInfo = document.getElementById('fileInfo');
+
+                dropZone.addEventListener('click', () => fileInput.click());
+
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, preventDefaults, false);
+                    dropZone.addEventListener(eventName, preventDefaults);
                 });
-    
+
                 function preventDefaults(e) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
-    
+
                 ['dragenter', 'dragover'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, highlight, false);
+                    dropZone.addEventListener(eventName, () => {
+                        dropZone.classList.add('dragover');
+                    });
                 });
-    
+
                 ['dragleave', 'drop'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, unhighlight, false);
+                    dropZone.addEventListener(eventName, () => {
+                        dropZone.classList.remove('dragover');
+                    });
                 });
-    
-                function highlight(e) {
-                    dropZone.classList.add('dragover');
-                }
-    
-                function unhighlight(e) {
-                    dropZone.classList.remove('dragover');
-                }
-    
-                dropZone.addEventListener('drop', handleDrop, false);
-    
+
+                dropZone.addEventListener('drop', handleDrop);
+                fileInput.addEventListener('change', handleFileSelect);
+
                 function handleDrop(e) {
                     const dt = e.dataTransfer;
                     const files = dt.files;
-                    fileInput.files = files;
                     handleFiles(files);
                 }
-    
-                fileInput.addEventListener('change', function(e) {
-                    handleFiles(this.files);
-                });
-    
+
+                function handleFileSelect(e) {
+                    const files = e.target.files;
+                    handleFiles(files);
+                }
+
                 function handleFiles(files) {
                     if (files.length > 0) {
                         const file = files[0];
-                        updateFilePreview(file);
-                        filePreview.style.display = 'block';
+                        showFileInfo(file);
                     }
                 }
-    
-                function updateFilePreview(file) {
-                    const nameElement = filePreview.querySelector('.file-preview-name');
-                    const sizeElement = filePreview.querySelector('.file-preview-size');
+
+                function showFileInfo(file) {
+                    const nameElement = fileInfo.querySelector('.file-name');
+                    const sizeElement = fileInfo.querySelector('.file-size');
                     
                     nameElement.textContent = file.name;
                     sizeElement.textContent = formatFileSize(file.size);
+                    fileInfo.style.display = 'block';
                 }
-    
+
                 function formatFileSize(bytes) {
                     if (bytes === 0) return '0 Bytes';
                     const k = 1024;
@@ -333,95 +278,6 @@
                     const i = Math.floor(Math.log(bytes) / Math.log(k));
                     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
                 }
-    
-                // Remove file handler
-                document.querySelector('.file-preview-remove').addEventListener('click', function() {
-                    fileInput.value = '';
-                    filePreview.style.display = 'none';
-                    loaderContainer.style.display = 'none';
-                    loaderProgress.style.width = '0%';
-                    uploadPercentage.textContent = '0%';
-                });
-    
-                // Updated form submission with real progress tracking
-                form.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    // Show loader only if there's a file
-                    if (fileInput.files.length > 0) {
-                        submitButton.disabled = true;
-                        loaderContainer.style.display = 'block';
-                        
-                        try {
-                            // Create FormData object
-                            const formData = new FormData(form);
-                            
-                            // Create and configure XMLHttpRequest
-                            const xhr = new XMLHttpRequest();
-                            
-                            // Setup upload progress handler
-                            xhr.upload.onprogress = function(event) {
-                                if (event.lengthComputable) {
-                                    const percentComplete = (event.loaded / event.total) * 100;
-                                    const progress = Math.round(percentComplete);
-                                    loaderProgress.style.width = progress + '%';
-                                    uploadPercentage.textContent = progress + '%';
-                                }
-                            };
-    
-                            // Setup completion handler
-                            xhr.onload = function() {
-                                if (xhr.status === 200) {
-                                    try {
-                                        const response = JSON.parse(xhr.responseText);
-                                        // Redirect using the URL in the response
-                                        if (response.redirect) {
-                                            window.location.href = response.redirect;
-                                        } else {
-                                            alert("Redirect URL not found.");
-                                        }
-                                    } catch (e) {
-                                        console.error("Could not parse JSON response:", e);
-                                        handleError("Upload failed: Invalid server response.");
-                                    }
-                                } else {
-                                    handleError("Upload failed: " + xhr.statusText);
-                                }
-                            };
-
-    
-                            // Setup error handler
-                            xhr.onerror = function() {
-                                handleError('Upload failed: Network error');
-                            };
-    
-                            // Initialize request
-                            xhr.open('POST', form.action, true);
-                            
-                            // Set CSRF token
-                            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-                            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-                            
-                            // Send the form data
-                            xhr.send(formData);
-    
-                        } catch (error) {
-                            handleError('Upload failed: ' + error.message);
-                        }
-                    } else {
-                        // If no file, submit form normally
-                        form.submit();
-                    }
-                });
-    
-                // Error handler
-                function handleError(message) {
-                    submitButton.disabled = false;
-                    loaderContainer.style.display = 'none';
-                    alert(message);
-                }
-    
-                
             });
         </script>
     </body>
