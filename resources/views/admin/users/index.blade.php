@@ -1,15 +1,51 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50">
-        <!-- Header with DepEd styling -->
-        <div class="bg-gradient-to-r from-blue-800 to-blue-600 py-6 px-4 shadow-lg">
-            <div class="container mx-auto flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <img src="{{ asset('path-to-deped-binan-logo.png') }}" alt="DepEd Biñan Logo" class="h-16 w-auto">
-                    <h1 class="text-2xl font-bold text-white">User Management System</h1>
-                </div>
-                <span class="text-yellow-300 font-semibold">DepEd Biñan Division</span>
-            </div>
-        </div>
+    <style>
+    .promote-button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .demote-button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .info-message {
+    padding: 10px;
+    margin-bottom: 20px;
+    color: #856404;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 4px;
+    text-align: center;
+}
+
+
+</style>
+
+
+
+    
+    
+@if(session()->has('message'))
+<div class="info-message">
+    {{ session('message') }}
+</div>
+@endif
+
+@if(session()->has('success'))
+<div class="success-message">
+    {{ session('success') }}
+</div>
+@endif
 
         <!-- Main Content -->
         <div class="container mx-auto py-8 px-4">
@@ -43,6 +79,8 @@
                                 <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">ID</th>
                                 <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Name</th>
                                 <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Email</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Role</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Role_Level</th>
                                 <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Actions</th>
                             </tr>
                         </thead>
@@ -52,7 +90,21 @@
                                     <td class="px-6 py-4 text-sm text-gray-700">{{ $user->id }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-700">{{ $user->name }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-700">{{ $user->email }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700">{{ $user->role }}</td>
                                     <td class="px-6 py-4 text-sm space-x-3">
+                                        
+                                        <form action="{{ route('users.promote', $user->id) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            <button type="submit" class="promote-button">Promote</button>
+                                        </form>
+                                        
+                                        <form action="{{ route('users.demote', $user->id) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            <button type="submit" class="demote-button">Demote</button>
+                                        </form>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm space-x-3">
+                                        
                                         <a href="{{ route('users.edit', $user) }}" 
                                            class="text-blue-600 hover:text-blue-800 font-medium">
                                             Edit

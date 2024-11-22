@@ -1,10 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Approve Entries') }}
-        </h2>
-    </x-slot>
-
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -12,144 +6,279 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Approve Entries</title>
         <style>
+            :root {
+                --primary-color: #4f46e5;
+                --danger-color: #ef4444;
+                --success-color: #22c55e;
+                --background-color: #f8fafc;
+                --card-background: #ffffff;
+                --text-primary: #1f2937;
+                --text-secondary: #6b7280;
+                --border-color: #e5e7eb;
+            }
+    
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
-            /* General Styles */
+    
             body {
-                font-family: Arial, sans-serif;
-                background-color: #f8fafc;
-                color: #333;
-                margin: 0;
-                padding: 20px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
             }
-
+    
             main {
-                max-width: 90%;
-                margin: 20px auto;
-                padding: 20px;
-                background-color: #ffffff;
-                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-                border-radius: 8px;
+                padding: 1.5rem;
+                max-width: 1200px;
+                margin: 0 auto;
             }
-
-            h1 {
-                font-size: 1.5rem;
-                color: #333;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-
-            .success-message {
-                padding: 10px;
-                margin-bottom: 20px;
-                color: #155724;
-                background-color: #d4edda;
-                border: 1px solid #c3e6cb;
-                border-radius: 4px;
-                text-align: center;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-                border-radius: 6px;
-                overflow: hidden;
-            }
-
-            th, td {
-                padding: 12px 15px;
-                text-align: left;
-                border-bottom: 1px solid #e1e7ec;
-            }
-
-            th {
-                background-color: #f1f5f9;
-                color: #333;
+    
+            .page-title {
+                font-size: 1.875rem;
                 font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 1.5rem;
+                text-align: center;
             }
-
-            td {
-                background-color: #ffffff;
+    
+            .success-alert {
+                background-color: #dcfce7;
+                color: #166534;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin-bottom: 1.5rem;
+                text-align: center;
             }
-
-            .action-buttons a, .action-buttons form button {
-                text-decoration: none;
-                color: #fff;
-                padding: 8px 12px;
-                border-radius: 4px;
+    
+            .search-container {
+                margin-bottom: 1.5rem;
+            }
+    
+            .search-form {
+                display: flex;
+                gap: 0.5rem;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+    
+            .search-input {
+                flex: 1;
+                padding: 0.75rem;
+                border: 1px solid var(--border-color);
+                border-radius: 0.5rem;
+                font-size: 1rem;
+            }
+    
+            .search-button {
+                padding: 0.75rem 1.5rem;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+    
+            .search-button:hover {
+                background-color: #4338ca;
+            }
+    
+            .entries-grid {
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+    
+            .entry-card {
+                background-color: var(--card-background);
+                border-radius: 0.5rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                transition: transform 0.2s;
+            }
+    
+            .entry-card:hover {
+                transform: translateY(-2px);
+            }
+    
+            .entry-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.5rem;
+            }
+    
+            .entry-id {
                 font-size: 0.875rem;
-                margin-right: 5px;
+                color: var(--text-secondary);
+            }
+    
+            .entry-title {
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 0.5rem;
+            }
+    
+            .entry-description {
+                color: var(--text-secondary);
+                margin-bottom: 0.5rem;
+                word-break: break-word;
+            }
+    
+            .entry-category {
                 display: inline-block;
+                padding: 0.25rem 0.75rem;
+                background-color: #e5e7eb;
+                border-radius: 1rem;
+                font-size: 0.875rem;
+                margin-bottom: 0.5rem;
+            }
+    
+            .entry-attachment {
+                margin-bottom: 0.75rem;
+            }
+    
+            .attachment-link {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-size: 0.875rem;
+            }
+    
+            .no-attachment {
+                color: var(--text-secondary);
+                font-style: italic;
+                font-size: 0.875rem;
+            }
+    
+            .entry-actions {
+                display: flex;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+    
+            .btn {
+                padding: 0.5rem 1rem;
+                border-radius: 0.375rem;
+                font-size: 0.875rem;
+                text-decoration: none;
+                text-align: center;
+                transition: background-color 0.2s;
+                flex: 1;
+            }
+    
+            .btn-edit {
+                background-color: var(--primary-color);
+                color: white;
+            }
+    
+            .btn-edit:hover {
+                background-color: #4338ca;
+            }
+    
+            .btn-delete {
+                background-color: var(--danger-color);
+                color: white;
+                border: none;
                 cursor: pointer;
             }
-
-            .edit-button {
-                background-color: #4c51bf;
+    
+            .btn-delete:hover {
+                background-color: #dc2626;
             }
-
-            .delete-button {
-                background-color: #f56565;
-            }
-
-            .no-attachment, .no-category {
-                font-style: italic;
-                color: #6b7280;
+    
+            @media (max-width: 640px) {
+                main {
+                    padding: 1rem;
+                }
+    
+                .page-title {
+                    font-size: 1.5rem;
+                }
+    
+                .search-form {
+                    flex-direction: column;
+                }
+    
+                .search-button {
+                    width: 100%;
+                }
+    
+                .entries-grid {
+                    grid-template-columns: 1fr;
+                }
             }
         </style>
     </head>
     <body>
         <main>
-            <h1>Approve Entries</h1>
-
+            <h1 class="page-title">Approve Entries</h1>
+    
             @if(session()->has('success'))
-                <div class="success-message">
+                <div class="success-alert">
                     {{ session('success') }}
                 </div>
             @endif
+    
+            <div class="search-container">
+                <form method="GET" action="{{ route('entries.search') }}" class="search-form">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        placeholder="Search entries..." 
+                        value="{{ request('search') }}"
+                        class="search-input"
+                    >
+                    <button type="submit" class="search-button">Search</button>
+                </form>
+            </div>
+    
+            <div class="entries-grid">
+                @foreach($entries as $entry)
+                    <div class="entry-card">
+                        
+                        <!-- 
+                        <div class="entry-header">
+                            <span class="entry-id">#{{ $entry->id }}</span>
+                        </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Attachment</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($entries as $entry)
-                        <tr>
-                            <td>{{ $entry->id }}</td>
-                            <td>{{ $entry->title }}</td>
-                            <td>{{ $entry->description }}</td>
-                            <td>{{ $entry->category->name ?? 'No Category' }}</td>
-                            <td>
-                                @if($entry->attachment)
-                                    <a href="{{ asset('storage/' . $entry->attachment) }}" target="_blank" class="attachment-link">View Attachment</a>
-                                @else
-                                    <span class="no-attachment">No Attachment</span>
-                                @endif
-                            </td>
-                            <td class="action-buttons">
-                                <a href="{{ route('entries.edit', ['entries' => $entry]) }}" class="edit-button">Edit</a>
-                                <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}" style="display: inline;">
-                                    @csrf
-                                    @method('delete')
-                                    <button type="submit" class="delete-button">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                        -->
+                        
+                        <h2 class="entry-title">{{ $entry->title }}</h2>
+                        <p class="entry-description">{{ $entry->description }}</p>
+                        
+                        <div class="entry-category">
+                            {{ $entry->category->name ?? 'No Category' }}
+                        </div>
+                        
+                        <div class="entry-attachment">
+                            @if($entry->attachment)
+                                <a href="{{ asset('storage/' . $entry->attachment) }}" target="_blank" class="attachment-link">
+                                    View Attachment
+                                </a>
+                            @else
+                                <span class="no-attachment">No Attachment</span>
+                            @endif
+                        </div>
+    
+                        <div class="entry-actions">
+                            <a href="{{ route('entries.show', ['entry' => $entry->id]) }}" class="btn btn-view">View</a>
+                            <a href="{{ route('entriess.edit', ['entry' => $entry->id]) }}" class="btn btn-edit">Edit</a>
+                            <form method="POST" action="{{ route('entriesss.delete', ['entry' => $entry->id]) }}" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-delete">Delete</button>
+                            </form>
+                            
+
+                            
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </main>
     </body>
     </html>
-</x-app-layout>
+    </x-app-layout>

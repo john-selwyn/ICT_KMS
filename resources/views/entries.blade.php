@@ -1,109 +1,210 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Pending Entries') }}
-            </h2>
-            <a href="{{ route('entries.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Add New Entry
-            </a>
-        </div>
-    </x-slot>
+<style>
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+    }
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    .page-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .add-button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        border: none;
+        transition: background-color 0.2s;
+    }
+
+    .add-button:hover {
+        background-color: #4338ca;
+    }
+
+    .main-content {
+        padding: 3rem 0;
+    }
+
+    .container {
+        max-width: 80rem;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .success-message {
+        background-color: #ecfdf5;
+        padding: 1rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1rem;
+    }
+
+    .success-text {
+        color: #065f46;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .table-container {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-header {
+        background-color: #f9fafb;
+        text-align: left;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #6b7280;
+        text-transform: uppercase;
+    }
+
+    .table-cell {
+        padding: 1rem 1.5rem;
+        font-size: 0.875rem;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .category-badge {
+        background-color: #dbeafe;
+        color: #1e40af;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .attachment-link {
+        color: #4f46e5;
+        text-decoration: none;
+    }
+
+    .attachment-link:hover {
+        color: #4338ca;
+    }
+
+    .no-attachment {
+        color: #9ca3af;
+    }
+
+    .view-button,
+.approve-button,
+.delete-button {
+    display: inline-block;
+    background-color: #6366f1;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.approve-button {
+    background-color: #10b981;
+}
+
+.delete-button {
+    background-color: #ef4444;
+}
+    /* Optional hover effects */
+    .view-button:hover,
+    .approve-button:hover,
+    .delete-button:hover {
+        opacity: 0.9;
+    }
+</style>
+
+<x-app-layout>
+    <div class="header-container">
+        <h2 class="page-title">{{ __('Pending Entries') }}</h2>
+        <a href="{{ route('entries.create') }}" class="add-button">Add New Entry</a>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
             @if(session()->has('success'))
-                <div class="mb-4 rounded-md bg-green-50 p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">
-                                {{ session('success') }}
-                            </p>
-                        </div>
-                    </div>
+                <div class="success-message">
+                    <p class="success-text">{{ session('success') }}</p>
                 </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th class="table-header">ID</th>
+                            <th class="table-header">Title</th>
+                            <th class="table-header">Description</th>
+                            <th class="table-header">Category</th>
+                            <th class="table-header">Attachment</th>
+                            <th class="table-header">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($entries as $entry)
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attachment</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <td class="table-cell">{{ $entry->id }}</td>
+                                <td class="table-cell">{{ $entry->title }}</td>
+                                <td class="table-cell">
+                                    <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        {{ $entry->description }}
+                                    </div>
+                                </td>
+                                <td class="table-cell">
+                                    <span class="category-badge">
+                                        {{ $entry->category->name ?? 'No Category' }}
+                                    </span>
+                                </td>
+                                <td class="table-cell">
+                                    @if($entry->attachment)
+                                        <a href="#" class="attachment-link">{{ $entry->attachment }}</a>
+                                    @else
+                                        <span class="no-attachment">No attachment</span>
+                                    @endif
+                                </td>
+                                <td class="table-cell">
+                                    <div class="action-buttons">
+                                        <a href="{{ route('show.pending', ['entry' => $entry->id]) }}" 
+                                           class="view-button">Review</a>
+                                        
+                                        <form action="{{ route('entries.approve', $entry->id) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('post')
+                                            <button type="submit" class="approve-button">Approve</button>
+                                        </form>
+                                
+                                        <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}" style="display: inline;">
+                                            @csrf
+                                            @method('delete')
+                                            <button type="submit" class="delete-button" 
+                                                    onclick="return confirm('Are you sure you want to delete this entry?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($entries as $entry)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $entry->id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $entry->title }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        <div class="max-w-xs truncate">{{ $entry->description }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            {{ $entry->category->name ?? 'No Category' }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        @if($entry->attachment)
-                                            <a href="#" class="text-indigo-600 hover:text-indigo-900">{{ $entry->attachment }}</a>
-                                        @else
-                                            <span class="text-gray-400">No attachment</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div class="flex space-x-2">
-                                            <a href="{{ route('entries.edit', ['entries' => $entry]) }}" 
-                                               class="text-indigo-600 hover:text-indigo-900">
-                                                <span class="sr-only">Edit</span>
-                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </a>
-                                            
-                                            <form action="{{ route('entries.approve', $entry->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('post')
-                                                <button type="submit" class="text-green-600 hover:text-green-900">
-                                                    <span class="sr-only">Approve</span>
-                                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-
-                                            <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}" class="inline">
-                                                @csrf
-                                                @method('delete')
-                                                <button type="submit" class="text-red-600 hover:text-red-900" 
-                                                        onclick="return confirm('Are you sure you want to delete this entry?')">
-                                                    <span class="sr-only">Delete</span>
-                                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -69,4 +69,32 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
+
+    public function promote(User $user)
+    {
+        if ($user->role === 'admin') {
+            return back()->with('message', 'User is already an admin.');
+        }
+
+        // Update user role to a higher level, e.g., 'admin'
+        $user->role = 'admin'; // or however your roles are structured
+        $user->save();
+
+        return back()->with('success', 'User promoted successfully.');
+    }
+
+    public function demote(User $user)
+    {
+        if ($user->role === 'staff') {
+            return back()->with('message', 'User is already at the lowest role.');
+        }
+
+
+        // Update user role to a lower level, e.g., 'user'
+        $user->role = 'staff';
+        $user->save();
+
+        return back()->with('success', 'User demoted successfully.');
+    }
+
 }

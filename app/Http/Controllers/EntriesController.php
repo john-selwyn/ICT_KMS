@@ -30,6 +30,7 @@ class EntriesController extends Controller
             $approvedEntry->description = $entry->description;
             $approvedEntry->category_id = $entry->category_id;
             $approvedEntry->attachment = $entry->attachment;
+            $approvedEntry->youtube_url = $entry->youtube_url;
             $approvedEntry->save();
     
             // Delete the entry from pending_entries
@@ -42,6 +43,23 @@ class EntriesController extends Controller
             return redirect()->back()->with('error', 'Entry not found!');
         }
     }
+
+    public function search(Request $request)
+{
+    $query = $request->input('search'); // Get the search query from the request
+
+    $entries = Approval::when($query, function ($q) use ($query) {
+        // Search by title, description, or category name
+        $q->where('title', 'like', '%' . $query . '%')
+          ->orWhere('description', 'like', '%' . $query . '%')
+          ->orWhereHas('category', function ($catQuery) use ($query) {
+              $catQuery->where('name', 'like', '%' . $query . '%');
+          });
+    })->get();
+
+    return view('approve_entries', compact('entries'));
+}
+
 
 
 
@@ -63,10 +81,12 @@ class EntriesController extends Controller
             'title' => 'required',
             'description' => 'required',
             'category_id' => 'required|exists:categories,id',  // Ensure this matches the column name
-            'attachment' => 'nullable|file|max:204800',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,zip|max:204800',
+            'youtube_url' => 'nullable|url',  // Validate YouTube URL as optional
+            
         ]);
     
-        $data = $request->only(['title', 'description', 'category_id']); // Use 'category_id' here
+        $data = $request->only(['title', 'description', 'category_id', 'youtube_url']); // Use 'category_id' here
     
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
@@ -80,7 +100,9 @@ class EntriesController extends Controller
         }
     
         PendingEntries::create($data);
-        return response()->json(['redirect' => route('entries.pending')]);
+        
+        //return response()->json(['redirect' => route('entries.pending')]);
+        return redirect(route('entries.pending'))->with('success','Entries Updated Successfully');
     }
     
     public function edit(PendingEntries $entries){
@@ -93,10 +115,11 @@ class EntriesController extends Controller
             'description' => 'required',
             'category_id' => 'required',
             'attachment' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mkv|max:2048',  // max size 2MB
+            'youtube_url' => 'nullable|url',  // Validate YouTube URL as optional
             
 
         ]);
-        $data = $request->only(['title', 'description', 'category_id']);
+        $data = $request->only(['title', 'description', 'category_id', 'youtube_url']);
 
         if($request->hasFile('attachment')){
             $file = $request->file('attachment');
@@ -118,5 +141,11 @@ class EntriesController extends Controller
         $entries->delete();
         return redirect(route('entries.pending'))->with('success','Entries Deleted Successfully');
 
+    }
+
+    public function show_pending($entry)
+    {
+        $entry = PendingEntries::with('category')->findOrFail($entry);
+        return view('show_pending', compact('entry'));
     }
 }

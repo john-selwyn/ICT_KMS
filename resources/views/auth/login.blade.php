@@ -1,4 +1,3 @@
-
 <!DOCTYPE html> 
 <html lang="en">
 <head>
@@ -19,7 +18,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f0f2f5;
+            background: #f5f7fa;
             overflow-x: hidden;
             padding: 1rem;
         }
@@ -43,7 +42,8 @@
             position: absolute;
             width: 500px;
             height: 500px;
-            background: linear-gradient(45deg, #4481eb, #04befe);
+            /* Updated gradient using DepEd Biñan colors */
+            background: linear-gradient(45deg, #003471, #0066b3);
             border-radius: 50%;
             z-index: 0;
         }
@@ -83,7 +83,7 @@
 
         .title {
             font-size: clamp(1.5rem, 4vw, 2rem);
-            color: #333;
+            color: #003471;
             margin-bottom: 1.5rem;
         }
 
@@ -95,11 +95,15 @@
         .input-box input {
             width: 100%;
             padding: 0.8rem 2.5rem 0.8rem 1rem;
-            border: 1px solid #ddd;
+            border: 1px solid #ccd6e0;
             border-radius: 8px;
             outline: none;
             font-size: 1rem;
             transition: 0.3s;
+        }
+
+        .input-box input:focus {
+            border-color: #003471;
         }
 
         .input-box label {
@@ -108,7 +112,7 @@
             top: 50%;
             transform: translateY(-50%);
             pointer-events: none;
-            color: #999;
+            color: #6c757d;
             transition: 0.3s;
             background: #fff;
             padding: 0 0.4rem;
@@ -120,6 +124,7 @@
             top: 0;
             left: 0.8rem;
             font-size: 0.75rem;
+            color: #003471;
         }
 
         .input-box i {
@@ -127,7 +132,7 @@
             right: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #999;
+            color: #6c757d;
         }
 
         .remember-forgot {
@@ -143,7 +148,7 @@
         .btn {
             width: 100%;
             padding: 0.8rem;
-            background: #4481eb;
+            background: #003471;
             border: none;
             border-radius: 8px;
             color: #fff;
@@ -154,18 +159,18 @@
         }
 
         .btn:hover {
-            background: #2d6ad9;
+            background: #0066b3;
         }
 
         .linkTxt {
             margin-top: 1rem;
             text-align: center;
-            color: #666;
+            color: #6c757d;
             font-size: 0.9rem;
         }
 
         .linkTxt a {
-            color: #4481eb;
+            color: #003471;
             text-decoration: none;
             font-weight: 500;
         }
@@ -207,7 +212,7 @@
             .info-text {
                 order: -1;
                 margin-bottom: 1rem;
-                background: linear-gradient(45deg, #4481eb, #04befe);
+                background: linear-gradient(45deg, #003471, #0066b3);
                 border-radius: 12px;
             }
 
@@ -289,22 +294,7 @@
                     @enderror
                 </div>
 
-                <div class="remember-forgot animation">
-                    <label for="remember_me">
-                        <input id="remember_me" type="checkbox" name="remember" 
-                               {{ old('remember') ? 'checked' : '' }}>
-                        <span>Remember me</span>
-                    </label>
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}">Forgot password?</a>
-                    @endif
-                </div>
-
                 <button type="submit" class="btn animation">Login</button>
-
-                <div class="linkTxt animation">
-                    <p>Don't have an account? <a href="{{ route('register') }}" class="register-link">Sign Up</a></p>
-                </div>
             </form>
         </div>
 
