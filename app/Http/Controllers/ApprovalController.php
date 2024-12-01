@@ -70,5 +70,42 @@ class ApprovalController extends Controller
         return redirect()->route('entries.approves')->with('success', 'Entry deleted successfully!');
     }
 
+    public function trash($id)
+    {
+        $entry = Approval::findOrFail($id);
+        $entry->delete();
+
+        return redirect()->route('entries.approves')->with('success', 'Entry moved to trash!');
+    }
+
+    public function restore($id)
+    {
+        $entry = Approval::withTrashed()->findOrFail($id);
+        $entry->restore();
+
+        return redirect()->route('entries.approves')->with('success', 'Entry restored successfully!');
+    }
+
+    public function trashIndex()
+    {
+        $entries = Approval::all(); // Get all non-trashed entries
+        $trashedEntries = Approval::onlyTrashed()->get(); // Get only soft deleted entries
+
+        return view('trash', compact('entries', 'trashedEntries'));
+    }
+
+    public function handle()
+    {
+        Approval::onlyTrashed()
+            ->where('deleted_at', '<', now()->subDays(30))
+            ->forceDelete();
+
+        $this->info('Old trashed entries deleted successfully.');
+    }
+
+
+
+
+
 
 }

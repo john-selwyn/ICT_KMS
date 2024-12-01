@@ -20,8 +20,15 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
+
+    protected function TrashSchedule(Schedule $schedule)
+    {
+        $schedule->command('command:delete-old-trashed-entries')->daily();
+    }
+
+
 }

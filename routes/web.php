@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\New_EntryController;
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\TrashController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,7 +61,7 @@ Route::get('/entries/pending/{entry}', [EntriesController::class, 'show_pending'
 
 
 //Entries Controller
-Route::get('/entries', [EntriesController::class, 'approve_entries'])->name('entries.approves');
+Route::get('/approve_entries', [EntriesController::class, 'approve_entries'])->name('entries.approves');
 Route::post('/entries/approve/{id}', [EntriesController::class, 'approve'])->name('entries.approve');
 
 
@@ -74,6 +75,12 @@ Route::get('/entries/{entry}', [ApprovalController::class, 'show'])->name('entri
 Route::get('/entries/{entry}/edit', [ApprovalController::class, 'edit'])->name('entriess.edit');
 Route::put('/entries/{entry}', [ApprovalController::class, 'update'])->name('entriess.update');
 Route::delete('/entries/{entry}', [ApprovalController::class, 'destroy'])->name('entriesss.delete');
+
+//Trash Approval
+Route::delete('/approve_entries/{entry}/trash', [ApprovalController::class, 'trash'])->name('entries.trash');
+Route::get('/approve_entries/trash', [ApprovalController::class, 'trashIndex'])->name('entries.trash.index');
+Route::post('/approve_entries/{entry}/restore', [ApprovalController::class, 'restore'])->name('entries.restore');
+Route::get('/trash/{id}', [TrashController::class, 'viewTrash'])->name('trash.view');
 
 
 
