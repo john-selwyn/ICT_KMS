@@ -23,4 +23,9 @@ class PendingEntries extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function attachments() {
+        return $this->hasMany(Attachment::class, 'pending_entry_id');
+    }
+    
 }

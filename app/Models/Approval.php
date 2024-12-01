@@ -9,7 +9,7 @@ class Approval extends Model
 {
     use HasFactory;
 
-    protected $table = 'approve_entries';  // Make sure this matches your DB table
+    protected $table = 'approve_entries';  // Matches your database table
 
     protected $fillable = [
         'title',
@@ -20,8 +20,20 @@ class Approval extends Model
         'thumbnail',
     ];
 
+    /**
+     * Define the relationship with the Category model.
+     */
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+
+    /**
+     * Define the relationship with the Approve_Attachments model.
+     */
+    public function approve_attachments()
+    {
+        return $this->hasMany(ApproveAttachment::class, 'approve_entry_id');
+    }
+
 }

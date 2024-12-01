@@ -1,285 +1,203 @@
 <x-app-layout>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Create Entry</title>
-        <style>
-            :root {
-                --primary-blue: #0f2c59;
-                --border-gray: #e5e7eb;
-                --text-gray: #6b7280;
-                --background-white: #ffffff;
-            }
+    <div class="container">
+        <div class="form-card">
+            <h1>Create New Entry</h1>
 
+            @if($errors->any())
+                <ul class="error-list">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
+
+            <form method="POST" action="{{ route('entries.store') }}" enctype="multipart/form-data">
+                @csrf
+                
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" placeholder="Enter title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="Enter description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category_id">
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Attachments</label>
+                    <div id="fileInputsContainer">
+                        <div class="upload-zone">
+                            <input type="file" name="attachments[]" class="file-input" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png">
+                        </div>
+                    </div>
+                    <button type="button" id="addFileButton" class="btn-secondary">Add Another File</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="youtube_url">YouTube URL</label>
+                    <input type="url" name="youtube_url" id="youtube_url" placeholder="https://youtube.com/..." value="{{ old('youtube_url', $entries->youtube_url ?? '') }}">
+                </div>
+
+                <button type="submit">Create Entry</button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #0f2c59;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0a1f3d;
+        }
+
+        .error-list {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            list-style-type: none;
+        }
+
+        .error-list li {
+            color: #dc2626;
+            margin-bottom: 5px;
+        }
+
+        .upload-zone {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .upload-zone:hover {
+            border-color: #0f2c59;
+            background-color: #f8f9fa;
+        }
+
+        .upload-icon {
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .upload-text {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-info {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
             body {
-                background-color: #f8fafc;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            }
-
-            .container {
-                max-width: 48rem;
-                margin: 2rem auto;
-                padding: 0 1rem;
+                padding: 10px;
             }
 
             .form-card {
-                background-color: var(--background-white);
-                border-radius: 0.5rem;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                padding: 2rem;
+                padding: 20px;
             }
+        }
+    </style>
 
-            .page-title {
-                color: var(--primary-blue);
-                font-size: 1.5rem;
-                font-weight: 600;
-                margin-bottom: 2rem;
-            }
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInputsContainer = document.getElementById('fileInputsContainer'); // Container for file inputs
+            const addFileButton = document.getElementById('addFileButton'); // Button to add more file inputs
 
-            .form-group {
-                margin-bottom: 1.5rem;
-            }
-
-            .form-label {
-                display: block;
-                color: #374151;
-                font-size: 0.875rem;
-                font-weight: 500;
-                margin-bottom: 0.5rem;
-            }
-
-            .form-input,
-            .form-select {
-                width: 100%;
-                padding: 0.625rem;
-                border: 1px solid var(--border-gray);
-                border-radius: 0.375rem;
-                font-size: 0.875rem;
-                color: #1f2937;
-                transition: border-color 0.2s;
-            }
-
-            .form-input:focus,
-            .form-select:focus {
-                outline: none;
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            }
-
-            textarea.form-input {
-                min-height: 100px;
-                resize: vertical;
-            }
-
-            .upload-zone {
-                border: 2px dashed var(--border-gray);
-                border-radius: 0.375rem;
-                padding: 2rem;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-
-            .upload-zone:hover {
-                border-color: #3b82f6;
-                background-color: #f8fafc;
-            }
-
-            .upload-icon {
-                margin-bottom: 0.75rem;
-                color: var(--text-gray);
-            }
-
-            .upload-text {
-                color: var(--text-gray);
-                font-size: 0.875rem;
-            }
-
-            .file-info {
-                margin-top: 1rem;
-                padding: 0.75rem;
-                background-color: #f8fafc;
-                border-radius: 0.375rem;
-                font-size: 0.875rem;
-            }
-
-            .submit-button {
-                width: 100%;
-                padding: 0.75rem;
-                background-color: var(--primary-blue);
-                color: white;
-                border: none;
-                border-radius: 0.375rem;
-                font-size: 0.875rem;
-                font-weight: 500;
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
-
-            .submit-button:hover {
-                background-color: #1a365d;
-            }
-
-            .error-list {
-                background-color: #fee2e2;
-                border: 1px solid #fecaca;
-                border-radius: 0.375rem;
-                padding: 1rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .error-list li {
-                color: #dc2626;
-                font-size: 0.875rem;
-                margin-bottom: 0.25rem;
-            }
-
-            @media (max-width: 640px) {
-                .container {
-                    margin: 1rem auto;
-                }
-
-                .form-card {
-                    padding: 1.5rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="form-card">
-                <h1 class="page-title">Create New Entry</h1>
-
-                @if($errors->any())
-                    <ul class="error-list">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                @endif
-
-                <form method="POST" action="{{ route('entries.store') }}" enctype="multipart/form-data">
-                    @csrf
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="title">Title</label>
-                        <input type="text" id="title" name="title" class="form-input" placeholder="Enter title" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="description">Description</label>
-                        <textarea id="description" name="description" class="form-input" placeholder="Enter description" required></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="category">Category</label>
-                        <select id="category" name="category_id" class="form-select">
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Attachment</label>
-                        <div class="upload-zone" id="dropZone">
-                            <div class="upload-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                                </svg>
-                            </div>
-                            <div class="upload-text">Drag and drop a file here or click to browse</div>
-                            <input type="file" name="attachment" id="fileInput" class="hidden" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" style="display: none;">
-                            <div class="file-info" id="fileInfo" style="display: none;">
-                                <div class="file-name"></div>
-                                <div class="file-size"></div>
-                            </div>
-
-                            
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="youtube_url">YouTube URL</label>
-                        <input type="url" name="youtube_url" id="youtube_url" class="form-control" placeholder="https://youtube.com/..." value="{{ old('youtube_url', $entries->youtube_url ?? '') }}">
-                    </div>
-                    
-
-                    <button type="submit" class="submit-button">Create Entry</button>
-                </form>
-            </div>
-        </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const dropZone = document.getElementById('dropZone');
-                const fileInput = document.getElementById('fileInput');
-                const fileInfo = document.getElementById('fileInfo');
-
-                dropZone.addEventListener('click', () => fileInput.click());
-
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, preventDefaults);
-                });
-
-                function preventDefaults(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-
-                ['dragenter', 'dragover'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, () => {
-                        dropZone.classList.add('dragover');
-                    });
-                });
-
-                ['dragleave', 'drop'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, () => {
-                        dropZone.classList.remove('dragover');
-                    });
-                });
-
-                dropZone.addEventListener('drop', handleDrop);
-                fileInput.addEventListener('change', handleFileSelect);
-
-                function handleDrop(e) {
-                    const dt = e.dataTransfer;
-                    const files = dt.files;
-                    handleFiles(files);
-                }
-
-                function handleFileSelect(e) {
-                    const files = e.target.files;
-                    handleFiles(files);
-                }
-
-                function handleFiles(files) {
-                    if (files.length > 0) {
-                        const file = files[0];
-                        showFileInfo(file);
-                    }
-                }
-
-                function showFileInfo(file) {
-                    const nameElement = fileInfo.querySelector('.file-name');
-                    const sizeElement = fileInfo.querySelector('.file-size');
-                    
-                    nameElement.textContent = file.name;
-                    sizeElement.textContent = formatFileSize(file.size);
-                    fileInfo.style.display = 'block';
-                }
-
-                function formatFileSize(bytes) {
-                    if (bytes === 0) return '0 Bytes';
-                    const k = 1024;
-                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                    const i = Math.floor(Math.log(bytes) / Math.log(k));
-                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-                }
+            // Event listener for "Add Another File" button
+            addFileButton.addEventListener('click', function () {
+                const newFileInput = document.createElement('div'); // Create a new div for the file input
+                newFileInput.classList.add('upload-zone'); // Add a class for styling
+                newFileInput.innerHTML = `
+                    <input type="file" name="attachments[]" class="file-input" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png">
+                    <button type="button" class="btn-remove" onclick="removeFileInput(this)">Remove</button>
+                `;
+                fileInputsContainer.appendChild(newFileInput); // Append the new input to the container
             });
-        </script>
-    </body>
-    </html>
+        });
+
+        // Function to handle removing a file input field
+        function removeFileInput(button) {
+            button.parentElement.remove(); // Remove the parent div of the "Remove" button
+        }
+    </script>
 </x-app-layout>

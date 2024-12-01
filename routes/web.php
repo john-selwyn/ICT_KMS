@@ -55,17 +55,17 @@ Route::get('new-entry/show', [New_EntryController::class, 'showEntries'])->name(
 
 
 //Entries pending view
-Route::get('/entries/pending', [EntriesController::class,'entries'])->name('entries.pending');
-Route::get('/entries/pending{entry}', [EntriesController::class, 'show_pending'])->name('show.pending'); // Show Pending Item
+Route::get('/entries/pending', [EntriesController::class, 'entries'])->name('entries.pending');
+Route::get('/entries/pending/{entry}', [EntriesController::class, 'show_pending'])->name('show.pending'); // Show Pending Item
 
 
 //Entries Controller
-Route::get('/entries', [EntriesController::class,'approve_entries'])->name('entries.approves');
+Route::get('/entries', [EntriesController::class, 'approve_entries'])->name('entries.approves');
 Route::post('/entries/approve/{id}', [EntriesController::class, 'approve'])->name('entries.approve');
 
 
 Route::group(['middleware' => ['admin']], function () {
-Route::get('/entries/create', [EntriesController::class,'create'])->name('entries.create');
+    Route::get('/entries/create', [EntriesController::class, 'create'])->name('entries.create');
 });
 
 //Approval Controller
@@ -81,29 +81,29 @@ Route::delete('/entries/{entry}', [ApprovalController::class, 'destroy'])->name(
 
 
 
-Route::get('/search', [EntriesController::class,'search'])->name('entries.search');
+Route::get('/search', [EntriesController::class, 'search'])->name('entries.search');
 
-Route::post('/entries/create', [EntriesController::class,'store'])->name('entries.store');
-Route::get('/entries/{entries}/edit', [EntriesController::class,'edit'])->name('entries.edit');
-Route::put('/entries/{entries}/update', [EntriesController::class,'update'])->name('entries.update');
-Route::delete('/entries/{entries}/delete', [EntriesController::class,'delete'])->name('entries.delete');
+Route::post('/entries/create', [EntriesController::class, 'store'])->name('entries.store');
+Route::get('/entries/{entries}/edit', [EntriesController::class, 'edit'])->name('entries.edit');
+Route::put('/entries/{entries}/update', [EntriesController::class, 'update'])->name('entries.update');
+Route::delete('/entries/{entries}/delete', [EntriesController::class, 'delete'])->name('entries.delete');
 
 
 //Category Controller
 
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
-    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-    Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
 
 
 
-    Route::middleware(['auth', 'admin'])->group(function () {
-        Route::resource('users', UserController::class)->except(['show']);
-    });
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('users', UserController::class)->except(['show']);
+});
 
 
 
@@ -121,4 +121,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

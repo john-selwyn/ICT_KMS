@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <style>
     .entry-detail {
@@ -159,12 +160,14 @@
     }
   </style>
 </head>
+
 <body>
   <x-app-layout>
     <div class="entry-detail">
       <div class="entry-header">
         <div class="entry-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
             <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -176,14 +179,16 @@
           <h1 class="entry-title">{{ $entry->title }}</h1>
           <div class="entry-meta">
             <span class="entry-category">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                 <line x1="7" y1="7" x2="7.01" y2="7"></line>
               </svg>
               {{ $entry->category->name ?? 'No Category' }}
             </span>
             <span class="entry-date">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -196,18 +201,23 @@
       </div>
 
       <p class="entry-description">{{ $entry->description }}</p>
-      
+
       <div class="entry-attachments">
-        @if($entry->attachment)
-        <a href="{{ asset('storage/' . $entry->attachment) }}" target="_blank" class="attachment-link">
-          <svg class="attachment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          View Attachment
-        </a>
-        @endif
+        @if($entry->approve_attachments->isNotEmpty())
+      @foreach($entry->approve_attachments as $attachment)
+      <a href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank" class="attachment-link">
+      <svg class="attachment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      {{ basename($attachment->file_path) }}
+      </a>
+    @endforeach
+    @else
+    <p>No attachments available.</p>
+  @endif
         <!--
         <a href="{{ route('entries.approves') }}" class="btn-back">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -218,39 +228,37 @@
         </a>
          -->
       </div>
-   
+
       @if(!empty($entry->youtube_url))
-      <div class="entry-youtube">
+        <div class="entry-youtube">
         @php
-          $url = trim($entry->youtube_url);
-          
-          function getYoutubeId($url) {
-            if (strpos($url, 'youtu.be/') !== false) {
-              return substr(parse_url($url, PHP_URL_PATH), 1);
-            }
-            parse_str(parse_url($url, PHP_URL_QUERY), $params);
-            return $params['v'] ?? null;
-          }
-          
-          $videoId = getYoutubeId($url);
-        @endphp
+        $url = trim($entry->youtube_url);
+
+        function getYoutubeId($url)
+        {
+        if (strpos($url, 'youtu.be/') !== false) {
+        return substr(parse_url($url, PHP_URL_PATH), 1);
+        }
+        parse_str(parse_url($url, PHP_URL_QUERY), $params);
+        return $params['v'] ?? null;
+        }
+
+        $videoId = getYoutubeId($url);
+    @endphp
 
         @if($videoId)
-        <div class="video-container">
-          <iframe 
-            width="560" 
-            height="315" 
-            src="https://www.youtube.com/embed/{{ $videoId }}" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-        </div>
-        @endif
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ $videoId }}" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+        </iframe>
       </div>
-      @endif
+    @endif
+        </div>
+    @endif
       <a href="{{ route('entries.approves') }}" class="btn-back">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -259,4 +267,5 @@
     </div>
   </x-app-layout>
 </body>
+
 </html>

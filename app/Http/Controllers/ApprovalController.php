@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Approval;
 use App\Models\PendingEntries;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ApprovalController extends Controller
@@ -14,38 +15,52 @@ class ApprovalController extends Controller
         return view('show', compact('entry'));
     }
 
-    public function edit($entry)
+    public function edit($id)
     {
-        $entry = Approval::findOrFail($entry);
-        return view('edit_approve', compact('entry'));
+        // Fetch the current entry by ID
+        $entry = Approval::findOrFail($id);
+
+        // Fetch all categories from the database
+        $categories = Category::all();
+
+        // Pass the entry and categories to the edit view
+        return view('edit_approve', compact('entry', 'categories'));
     }
+
 
     public function update(Request $request, $entry)
     {
         $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,zip',
-            'youtube_url' => 'nullable|url' // Validate as a URL if it exists
-            
+            'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,zip', // Validate multiple attachments
+            'youtube_url' => 'nullable|url',
         ]);
 
+        // Find the entry to update
         $entry = Approval::findOrFail($entry);
         $entry->title = $request->title;
         $entry->description = $request->description;
+        $entry->youtube_url = $request->youtube_url;
 
-        if ($request->hasFile('attachment')) {
-            $filePath = $request->file('attachment')->store('uploads', 'public');
-            $entry->attachment = $filePath;
+        // Handle the attachment files (upload to storage and save paths)
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $attachment) {
+                $filePath = $attachment->store('uploads', 'public');
+
+                // Save attachment in the approve_attachments table
+                $entry->approve_attachments()->create([
+                    'file_path' => $filePath, // Store file path in the approve_attachments table
+                ]);
+            }
         }
 
-         // Save YouTube URL to the entry
-         $entry->youtube_url = $request->youtube_url;
-
+        // Save the updated entry
         $entry->save();
 
         return redirect()->route('entries.approves', ['entry' => $entry->id])->with('success', 'Entry updated successfully!');
     }
+
 
     public function destroy($entry)
     {
@@ -54,4 +69,6 @@ class ApprovalController extends Controller
 
         return redirect()->route('entries.approves')->with('success', 'Entry deleted successfully!');
     }
+
+
 }
