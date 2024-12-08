@@ -1,5 +1,6 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,8 @@
             overflow: hidden;
         }
 
-        .rotate-bg, .rotate-bg2 {
+        .rotate-bg,
+        .rotate-bg2 {
             position: absolute;
             width: 500px;
             height: 500px;
@@ -118,9 +120,9 @@
             padding: 0 0.4rem;
         }
 
-        .input-box input:focus ~ label,
-        .input-box input:valid ~ label,
-        .input-box input.focused ~ label {
+        .input-box input:focus~label,
+        .input-box input:valid~label,
+        .input-box input.focused~label {
             top: 0;
             left: 0.8rem;
             font-size: 0.75rem;
@@ -261,6 +263,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <span class="rotate-bg"></span>
@@ -273,9 +276,8 @@
                 @csrf
 
                 <div class="input-box animation">
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" 
-                           required autofocus autocomplete="username"
-                           class="@error('email') is-invalid @enderror">
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                        autocomplete="username" class="@error('email') is-invalid @enderror">
                     <label for="email">Email</label>
                     <i class='bx bxs-user'></i>
                     @error('email')
@@ -284,9 +286,8 @@
                 </div>
 
                 <div class="input-box animation">
-                    <input id="password" type="password" name="password" 
-                           required autocomplete="current-password"
-                           class="@error('password') is-invalid @enderror">
+                    <input id="password" type="password" name="password" required autocomplete="current-password"
+                        class="@error('password') is-invalid @enderror">
                     <label for="password">Password</label>
                     <i class='bx bxs-lock-alt'></i>
                     @error('password')
@@ -295,6 +296,10 @@
                 </div>
 
                 <button type="submit" class="btn animation">Login</button>
+
+                <div class="linkTxt animation">
+                    <p>Don't have an account? <a href="{{ route('register') }}" class="register-link">Sign Up</a></p>
+                </div>
             </form>
         </div>
 
@@ -305,30 +310,31 @@
     </div>
 
     @push('scripts')
-    <script>
-        // Add animation delay based on element position
-        document.querySelectorAll('.animation').forEach((element, index) => {
-            element.style.animationDelay = `${index * 0.1}s`;
-        });
-
-        // Floating labels
-        document.querySelectorAll('.input-box input').forEach(input => {
-            input.addEventListener('focus', () => {
-                input.classList.add('focused');
+        <script>
+            // Add animation delay based on element position
+            document.querySelectorAll('.animation').forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
             });
 
-            input.addEventListener('blur', () => {
-                if (!input.value) {
-                    input.classList.remove('focused');
+            // Floating labels
+            document.querySelectorAll('.input-box input').forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.classList.add('focused');
+                });
+
+                input.addEventListener('blur', () => {
+                    if (!input.value) {
+                        input.classList.remove('focused');
+                    }
+                });
+
+                // Check on load if input has value
+                if (input.value) {
+                    input.classList.add('focused');
                 }
             });
-
-            // Check on load if input has value
-            if (input.value) {
-                input.classList.add('focused');
-            }
-        });
-    </script>
+        </script>
     @endpush
 </body>
+
 </html>

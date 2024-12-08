@@ -1,4 +1,5 @@
 <style>
+    /* Existing Styles */
     .header-container {
         display: flex;
         justify-content: space-between;
@@ -103,28 +104,28 @@
     }
 
     .view-button,
-.approve-button,
-.delete-button {
-    display: inline-block;
-    background-color: #6366f1;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    line-height: 1.2;
-}
+    .approve-button,
+    .delete-button {
+        display: inline-block;
+        background-color: #6366f1;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: none;
+        line-height: 1.2;
+    }
 
-.approve-button {
-    background-color: #10b981;
-}
+    .approve-button {
+        background-color: #10b981;
+    }
 
-.delete-button {
-    background-color: #ef4444;
-}
-    /* Optional hover effects */
+    .delete-button {
+        background-color: #ef4444;
+    }
+
     .view-button:hover,
     .approve-button:hover,
     .delete-button:hover {
@@ -154,7 +155,7 @@
                             <th class="table-header">Title</th>
                             <th class="table-header">Description</th>
                             <th class="table-header">Category</th>
-                            <th class="table-header">Attachment</th>
+                            <th class="table-header">Attachments</th>
                             <th class="table-header">Actions</th>
                         </tr>
                     </thead>
@@ -164,38 +165,46 @@
                                 <td class="table-cell">{{ $entry->id }}</td>
                                 <td class="table-cell">{{ $entry->title }}</td>
                                 <td class="table-cell">
-                                    <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    <div
+                                        style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         {{ $entry->description }}
                                     </div>
                                 </td>
                                 <td class="table-cell">
                                     <span class="category-badge">
-                                        {{ $entry->category->name ?? 'No Category' }}
+                                        {{ optional($entry->category)->name ?? 'No Category' }}
                                     </span>
                                 </td>
+
                                 <td class="table-cell">
-                                    @if($entry->attachment)
-                                        <a href="#" class="attachment-link">{{ $entry->attachment }}</a>
+                                    @if($entry->attachments->isNotEmpty())
+                                        @foreach($entry->attachments as $attachment)
+                                            <a href="{{ asset('storage/' . $attachment->file_path) }}" class="attachment-link"
+                                                target="_blank">
+                                                {{ basename($attachment->file_path) }}
+                                            </a><br>
+                                        @endforeach
                                     @else
-                                        <span class="no-attachment">No attachment</span>
+                                        <span class="no-attachment">No attachments</span>
                                     @endif
                                 </td>
                                 <td class="table-cell">
                                     <div class="action-buttons">
-                                        <a href="{{ route('show.pending', ['entry' => $entry->id]) }}" 
-                                           class="view-button">Review</a>
-                                        
-                                        <form action="{{ route('entries.approve', $entry->id) }}" method="POST" style="display: inline;">
+                                        <a href="{{ route('show.pending', ['entry' => $entry->id]) }}"
+                                            class="view-button">Review</a>
+
+                                        <form action="{{ route('entries.approve', $entry->id) }}" method="POST"
+                                            style="display: inline;">
                                             @csrf
-                                            @method('post')
                                             <button type="submit" class="approve-button">Approve</button>
                                         </form>
-                                
-                                        <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}" style="display: inline;">
+
+                                        <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}"
+                                            style="display: inline;">
                                             @csrf
                                             @method('delete')
-                                            <button type="submit" class="delete-button" 
-                                                    onclick="return confirm('Are you sure you want to delete this entry?')">
+                                            <button type="submit" class="delete-button"
+                                                onclick="return confirm('Are you sure you want to delete this entry?')">
                                                 Delete
                                             </button>
                                         </form>

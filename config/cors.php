@@ -19,7 +19,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'https://043c-222-127-153-55.ngrok-free.app', // Your ngrok URL
+        'https://your-local-url.local',
+    ],
+
 
     'allowed_origins_patterns' => [],
 

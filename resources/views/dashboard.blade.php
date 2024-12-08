@@ -11,7 +11,8 @@
             <div class="search-wrapper">
                 <input type="search" class="search-input" placeholder="Search knowledge system...">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </div>
         </div>
@@ -20,7 +21,7 @@
         <div class="stats-grid">
             <!-- Total Categories -->
             <a href="{{ route('categories.index') }}" class="stat-card">
-                <div >
+                <div>
                     <div class="stat-content">
                         <div class="stat-info">
                             <p class="stat-label">Total Categories</p>
@@ -28,7 +29,8 @@
                         </div>
                         <div class="stat-icon blue">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                             </svg>
                         </div>
                     </div>
@@ -37,7 +39,7 @@
 
             <!-- Total Users -->
             <a href="{{ route('users.index') }}" class="stat-card">
-                <div >
+                <div>
                     <div class="stat-content">
                         <div class="stat-info">
                             <p class="stat-label">Total Users</p>
@@ -45,7 +47,8 @@
                         </div>
                         <div class="stat-icon green">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
                         </div>
                     </div>
@@ -54,7 +57,7 @@
 
             <!-- Total Entries -->
             <a href="{{ route('entries.approves') }}" class="stat-card">
-                <div >
+                <div>
                     <div class="stat-content">
                         <div class="stat-info">
                             <p class="stat-label">Total Entries</p>
@@ -62,17 +65,18 @@
                         </div>
                         <div class="stat-icon purple">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
                     </div>
                 </div>
 
-            </a>    
+            </a>
 
             <!-- Pending Entries -->
             <a href="{{ route('entries.pending') }}" class="stat-card">
-                <div >
+                <div>
                     <div class="stat-content">
                         <div class="stat-info">
                             <p class="stat-label">Pending Entries</p>
@@ -80,7 +84,8 @@
                         </div>
                         <div class="stat-icon orange">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                     </div>
@@ -91,7 +96,7 @@
 
         <!-- Recent Activity -->
         <div class="activity-card">
-            <h3 class="activity-title">Recent Activity</h3>
+            <h3 class="activity-title">Recents Activity</h3>
             <div class="activity-list">
                 <div class="activity-item">
                     <div class="activity-dot"></div>
@@ -284,6 +289,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);

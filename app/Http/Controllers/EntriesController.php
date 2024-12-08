@@ -83,7 +83,6 @@ class EntriesController extends Controller
     public function entries()
     {
         $entries = PendingEntries::with('category')->get();
-
         return view('entries', ['entries' => $entries]);
     }
 
