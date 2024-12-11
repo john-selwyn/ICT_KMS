@@ -19,41 +19,43 @@
 
         <!-- Stats Grid -->
         <div class="stats-grid">
-            <!-- Total Categories -->
-            <a href="{{ route('categories.index') }}" class="stat-card">
-                <div>
-                    <div class="stat-content">
-                        <div class="stat-info">
-                            <p class="stat-label">Total Categories</p>
-                            <p class="stat-value">{{ $categoryCount }}</p>
-                        </div>
-                        <div class="stat-icon blue">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                            </svg>
+            @if(auth()->user()->role !== 'staff')
+                <!-- Total Categories -->
+                <a href="{{ route('categories.index') }}" class="stat-card">
+                    <div>
+                        <div class="stat-content">
+                            <div class="stat-info">
+                                <p class="stat-label">Total Categories</p>
+                                <p class="stat-value">{{ $categoryCount }}</p>
+                            </div>
+                            <div class="stat-icon blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
 
-            <!-- Total Users -->
-            <a href="{{ route('users.index') }}" class="stat-card">
-                <div>
-                    <div class="stat-content">
-                        <div class="stat-info">
-                            <p class="stat-label">Total Users</p>
-                            <p class="stat-value">{{ $userCount }}</p>
-                        </div>
-                        <div class="stat-icon green">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
+                <!-- Total Users -->
+                <a href="{{ route('users.index') }}" class="stat-card">
+                    <div>
+                        <div class="stat-content">
+                            <div class="stat-info">
+                                <p class="stat-label">Total Users</p>
+                                <p class="stat-value">{{ $userCount }}</p>
+                            </div>
+                            <div class="stat-icon green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            @endif
 
             <!-- Total Entries -->
             <a href="{{ route('entries.approves') }}" class="stat-card">
@@ -71,7 +73,6 @@
                         </div>
                     </div>
                 </div>
-
             </a>
 
             <!-- Pending Entries -->
@@ -93,25 +94,26 @@
             </a>
         </div>
 
-
         <!-- Recent Activity -->
-        <div class="activity-card">
-            <h3 class="activity-title">Recents Activity</h3>
-            <div class="activity-list">
-                <div class="activity-item">
-                    <div class="activity-dot"></div>
-                    <p class="activity-text">New entry added to Database Management</p>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-dot"></div>
-                    <p class="activity-text">Category "Network Security" updated</p>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-dot"></div>
-                    <p class="activity-text">New user registration approved</p>
+        @if(auth()->user()->role !== 'staff')
+            <div class="activity-card">
+                <h3 class="activity-title">Recents Activity</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-dot"></div>
+                        <p class="activity-text">New entry added to Database Management</p>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot"></div>
+                        <p class="activity-text">Category "Network Security" updated</p>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot"></div>
+                        <p class="activity-text">New user registration approved</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
     </div>
 
     <style>

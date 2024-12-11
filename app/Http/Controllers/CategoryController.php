@@ -53,14 +53,18 @@ class CategoryController extends Controller
     }
 
     public function showItems(Category $category)
-{
-    $items = $category->items;
+    {
+        $items = $category->items;
 
-    if ($items->isEmpty()) {
-        return redirect()->back()->with('error', 'No items found for this category.');
+        if ($items->isEmpty()) {
+            return redirect()->back()->with('error', 'No items found for this category.');
+        }
+
+        return view('category_items', compact('category', 'items'));
     }
 
-    return view('category_items', compact('category', 'items'));
-}
+
+
+
 
 }

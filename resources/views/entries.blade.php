@@ -156,7 +156,9 @@
                             <th class="table-header">Description</th>
                             <th class="table-header">Category</th>
                             <th class="table-header">Attachments</th>
+
                             <th class="table-header">Actions</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -188,16 +190,18 @@
                                         <span class="no-attachment">No attachments</span>
                                     @endif
                                 </td>
+
                                 <td class="table-cell">
                                     <div class="action-buttons">
                                         <a href="{{ route('show.pending', ['entry' => $entry->id]) }}"
                                             class="view-button">Review</a>
-
-                                        <form action="{{ route('entries.approve', $entry->id) }}" method="POST"
-                                            style="display: inline;">
-                                            @csrf
-                                            <button type="submit" class="approve-button">Approve</button>
-                                        </form>
+                                        @if(auth()->user()->role !== 'staff') {{-- Only show for non-staff users --}}
+                                            <form action="{{ route('entries.approve', $entry->id) }}" method="POST"
+                                                style="display: inline;">
+                                                @csrf
+                                                <button type="submit" class="approve-button">Approve</button>
+                                            </form>
+                                        @endif
 
                                         <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}"
                                             style="display: inline;">
@@ -210,6 +214,7 @@
                                         </form>
                                     </div>
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>

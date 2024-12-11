@@ -270,13 +270,18 @@
                         </div>
 
                         <div class="entry-attachment">
-                            @if($entry->attachment)
-                                <a href="{{ asset('storage/' . $entry->attachment) }}" target="_blank" class="attachment-link">
-                                    View Attachment
-                                </a>
+                            @if($entry->approve_attachments)
+                                @foreach($entry->approve_attachments as $attachment)
+                                    <a href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank"
+                                        class="attachment-link">
+                                        View Attachment
+                                    </a>
+                                    <br>
+                                @endforeach
                             @else
                                 <span class="no-attachment">No Attachment</span>
                             @endif
+
                         </div>
 
                         <div class="entry-actions">

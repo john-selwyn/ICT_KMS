@@ -65,9 +65,8 @@ Route::get('/approve_entries', [EntriesController::class, 'approve_entries'])->n
 Route::post('/entries/approve/{id}', [EntriesController::class, 'approve'])->name('entries.approve');
 
 
-Route::group(['middleware' => ['admin']], function () {
-    Route::get('/entries/create', [EntriesController::class, 'create'])->name('entries.create');
-});
+Route::get('/entries/create', [EntriesController::class, 'create'])->name('entries.create');
+
 
 //Approval Controller
 

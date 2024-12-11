@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 use App\Models\PendingEntries;
 use App\Models\Approval;
 use App\Models\Category;
 use App\Models\Attachments;
 use App\Models\ApproveAttachment;
+
 
 use Illuminate\Http\Request;
 
@@ -13,12 +15,35 @@ class EntriesController extends Controller
 {
 
     //Approve Entries Section
-    public function approve_entries()
-    {
-        $entries = Approval::with('category')->get();
 
-        return view('approve_entries', ['entries' => $entries]);
+    public function approve_entries(Request $request)
+    {
+        // Fetch all categories for the dropdown
+        $categories = Category::all();
+
+        // Filter entries based on category and/or search query
+        $query = Approval::with('approve_attachments', 'category');
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category_id', $request->category);
+        }
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'LIKE', '%' . $request->search . '%'); // Example search condition
+        }
+        $entries = $query->get();
+
+
+        // Return the view with filtered entries and categories
+        return view('approve_entries', [
+
+            'entries' => $entries,
+            'categories' => $categories,
+        ]);
+
+
     }
+
+
+
 
     public function approve($id)
     {
@@ -36,15 +61,18 @@ class EntriesController extends Controller
                 // 'thumbnail' => $entry->thumbnail, // Include if necessary
             ]);
 
-            // Move attachments to approve_attachments table
-            foreach ($entry->attachments as $attachment) {
-                ApproveAttachment::create([
-                    'approve_entry_id' => $approvedEntry->id,
-                    'file_path' => $attachment->file_path,
-                ]);
+            // Check if there are attachments
+            if ($entry->attachments->isNotEmpty()) {
+                foreach ($entry->attachments as $attachment) {
+                    // Move attachments to approve_attachments table
+                    ApproveAttachment::create([
+                        'approve_entry_id' => $approvedEntry->id,
+                        'file_path' => $attachment->file_path,
+                    ]);
 
-                // Optionally, delete the attachment from the attachments table
-                $attachment->delete();
+                    // Optionally, delete the attachment from the attachments table
+                    $attachment->delete();
+                }
             }
 
             // Delete the entry from pending_entries
@@ -59,12 +87,13 @@ class EntriesController extends Controller
     }
 
 
+
     public function search(Request $request)
     {
-        $query = $request->input('search'); // Get the search query from the request
+        $query = $request->input('search');
+        $categories = Category::all(); // Ensure categories are fetched for the dropdown
 
         $entries = Approval::when($query, function ($q) use ($query) {
-            // Search by title, description, or category name
             $q->where('title', 'like', '%' . $query . '%')
                 ->orWhere('description', 'like', '%' . $query . '%')
                 ->orWhereHas('category', function ($catQuery) use ($query) {
@@ -72,8 +101,9 @@ class EntriesController extends Controller
                 });
         })->get();
 
-        return view('approve_entries', compact('entries'));
+        return view('approve_entries', compact('entries', 'categories'));
     }
+
 
 
 
@@ -82,9 +112,18 @@ class EntriesController extends Controller
     //Pending Entries Section
     public function entries()
     {
-        $entries = PendingEntries::with('category')->get();
+        // Check if the user is staff
+        if (auth()->user()->role === 'staff') {
+            // Fetch entries created by the current staff user
+            $entries = PendingEntries::where('created_by', auth()->id())->with('category')->get();
+        } else {
+            // Fetch all entries for other roles (e.g., admin)
+            $entries = PendingEntries::with('category')->get();
+        }
+
         return view('entries', ['entries' => $entries]);
     }
+
 
     public function create()
     {
@@ -103,12 +142,13 @@ class EntriesController extends Controller
             'youtube_url' => 'nullable|url',
         ]);
 
-        // Create pending entry
+        // Create pending entry with the logged-in user's ID
         $pendingEntry = PendingEntries::create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'category_id' => $validatedData['category_id'],
             'youtube_url' => $validatedData['youtube_url'] ?? null,
+            'created_by' => Auth::id(), // Save the creator's ID
         ]);
 
         // Handle multiple file uploads
