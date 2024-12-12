@@ -195,7 +195,7 @@
             }
 
             .btn-view {
-                background-color: #f3f4f6;
+                background-color: #10b981;
                 color: var(--text-primary);
             }
 

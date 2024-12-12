@@ -249,21 +249,27 @@ class EntriesController extends Controller
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'youtube_url' => 'nullable|url',
-            'attachments.*' => 'nullable|file|max:2048',
+            'attachments.*' => 'nullable|file|max:20048',
         ]);
 
         $entry = PendingEntries::findOrFail($id);
-        $entry->title = $request->title;
-        $entry->description = $request->description;
-        $entry->category_id = $request->category_id;
-        $entry->youtube_url = $request->youtube_url;
-        $entry->save();
 
-        // Handle new file uploads
+        // Update basic fields
+        $entry->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'youtube_url' => $request->youtube_url,
+        ]);
+
+        // Handle new attachments
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $filePath = $file->storeAs('attachments', $file->getClientOriginalName(), 'public');
-                $entry->attachments()->create(['file_path' => $filePath]);
+                Attachments::create([
+                    'pending_entry_id' => $entry->id,
+                    'file_path' => $filePath,
+                ]);
             }
         }
 
@@ -271,24 +277,22 @@ class EntriesController extends Controller
         if ($request->has('removed_attachments')) {
             foreach ($request->removed_attachments as $removedId) {
                 $attachment = Attachments::findOrFail($removedId);
-
-                // Delete from storage
                 Storage::disk('public')->delete($attachment->file_path);
-
-                // Delete from database
                 $attachment->delete();
             }
         }
-
+        /*
         // Handle existing attachments
         if ($request->existing_attachments) {
             $entry->attachments()->whereNotIn('id', $request->existing_attachments)->delete();
         } else {
             $entry->attachments()->delete();
         }
+            */
 
-        return redirect()->route('entries.pending', $entry->id)->with('success', 'Entry updated successfully!');
+        return redirect()->route('entries.pending')->with('success', 'Entry updated successfully!');
     }
+
 
 
 
