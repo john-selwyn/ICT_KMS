@@ -17,6 +17,7 @@ class Attachments extends Model
     protected $fillable = [
         'file_path',        // Path to the stored file 
         'pending_entry_id', // Foreign key to the pending_entries table
+        'original_name',
     ];
 
     /**

@@ -69,6 +69,7 @@ class EntriesController extends Controller
                     ApproveAttachment::create([
                         'approve_entry_id' => $approvedEntry->id,
                         'file_path' => $attachment->file_path,
+                        'original_name' => $attachment->original_name, // Ensure the original name is also transferred
                     ]);
 
                     // Optionally, delete the attachment from the attachments table
@@ -158,17 +159,19 @@ class EntriesController extends Controller
             foreach ($request->file('attachments') as $file) {
                 $filePath = $file->storeAs(
                     'uploads', // Directory
-                    $file->getClientOriginalName(), // Original filename
+                    $file->getClientOriginalName(), // Use original filename
                     'public' // Storage disk
                 );
 
-                // Save each file in the attachments table
+                // Save each file in the attachments table, including the original name
                 Attachments::create([
                     'pending_entry_id' => $pendingEntry->id, // Link to pending entry
                     'file_path' => $filePath, // File path
+                    'original_name' => $file->getClientOriginalName(), // Save original file name
                 ]);
             }
         }
+
 
         // Redirect to pending entries list with success message
         return redirect(route('entries.pending'))->with('success', 'Entry created successfully!');
