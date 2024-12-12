@@ -104,6 +104,7 @@
     }
 
     .view-button,
+    .edit-button,
     .approve-button,
     .delete-button {
         display: inline-block;
@@ -122,11 +123,16 @@
         background-color: #10b981;
     }
 
+    .edit-button {
+        background-color: #10b981;
+    }
+
     .delete-button {
         background-color: #ef4444;
     }
 
     .view-button:hover,
+    .edit-button:hover,
     .approve-button:hover,
     .delete-button:hover {
         opacity: 0.9;
