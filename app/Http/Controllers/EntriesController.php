@@ -9,6 +9,7 @@ use App\Models\Attachments;
 use App\Models\ApproveAttachment;
 
 
+
 use Illuminate\Http\Request;
 
 class EntriesController extends Controller
@@ -149,6 +150,7 @@ class EntriesController extends Controller
             'category_id' => $validatedData['category_id'],
             'youtube_url' => $validatedData['youtube_url'] ?? null,
             'created_by' => Auth::id(), // Save the creator's ID
+            'user_id' => Auth::id(), // Save the creator's ID
         ]);
 
         // Handle multiple file uploads
@@ -229,4 +231,67 @@ class EntriesController extends Controller
         // Pass the entry (with attachments) to the view
         return view('show_pending', compact('entry'));
     }
+
+    public function entry_edit($id)
+    {
+        $entry = PendingEntries::findOrFail($id); // Find the pending entry
+        $categories = Category::all(); // Fetch categories for dropdown
+        $attachments = Attachments::where('pending_entry_id', $id)->get(); // Get attachments for the entry
+
+        return view('edit_pending', compact('entry', 'categories', 'attachments'));
+    }
+
+
+    public function entry_update(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'youtube_url' => 'nullable|url',
+            'attachments.*' => 'nullable|file|max:2048',
+        ]);
+
+        $entry = PendingEntries::findOrFail($id);
+        $entry->title = $request->title;
+        $entry->description = $request->description;
+        $entry->category_id = $request->category_id;
+        $entry->youtube_url = $request->youtube_url;
+        $entry->save();
+
+        // Handle new file uploads
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $filePath = $file->storeAs('attachments', $file->getClientOriginalName(), 'public');
+                $entry->attachments()->create(['file_path' => $filePath]);
+            }
+        }
+
+        // Handle removing attachments
+        if ($request->has('removed_attachments')) {
+            foreach ($request->removed_attachments as $removedId) {
+                $attachment = Attachments::findOrFail($removedId);
+
+                // Delete from storage
+                Storage::disk('public')->delete($attachment->file_path);
+
+                // Delete from database
+                $attachment->delete();
+            }
+        }
+
+        // Handle existing attachments
+        if ($request->existing_attachments) {
+            $entry->attachments()->whereNotIn('id', $request->existing_attachments)->delete();
+        } else {
+            $entry->attachments()->delete();
+        }
+
+        return redirect()->route('entries.pending', $entry->id)->with('success', 'Entry updated successfully!');
+    }
+
+
+
+
+
 }

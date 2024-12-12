@@ -15,14 +15,30 @@ class DashboardController extends Controller
         $categoryCount = Category::count();
         $userCount = User::count();
         $approve_entriesCount = Approval::count();
-        $pending_entriesCount = PendingEntries::count();
-        
+
+        // Check if the logged-in user is a staff member
+        if (auth()->user()->role === 'staff') {
+            // Show only pending entries related to the logged-in staff
+            $pending_entriesCount = PendingEntries::where('user_id', auth()->id())->count();
+        } else {
+            // Show all pending entries for admins or other roles
+            $pending_entriesCount = PendingEntries::count();
+        }
+
         // Fetch latest entries and categories with approvals count
         $categories = Category::withCount('approvals')->get();
         $entries = Approval::latest()->take(5)->get();
 
-        return view('dashboard', compact('categories', 'entries', 'categoryCount', 'userCount', 'approve_entriesCount', 'pending_entriesCount'));
+        return view('dashboard', compact(
+            'categories',
+            'entries',
+            'categoryCount',
+            'userCount',
+            'approve_entriesCount',
+            'pending_entriesCount'
+        ));
     }
+
 
     public function show($id)
     {
@@ -49,7 +65,7 @@ class DashboardController extends Controller
         // Fetch the necessary counts
         $categoryCount = Category::count();
         $userCount = User::count();
-        
+
         // Fetch latest entries and categories with approvals count
         $categories = Category::withCount('approvals')->get();
         $entries = Approval::latest()->take(5)->get();

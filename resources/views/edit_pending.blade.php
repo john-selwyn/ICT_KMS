@@ -11,7 +11,8 @@
                 </ul>
             @endif
 
-            <form method="POST" action="{{ route('entriess.update', $entry->id) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('pending.entries.update', $entry->id) }}"
+                enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -41,17 +42,23 @@
                 <div class="form-group">
                     <label>Attachments</label>
                     <div id="fileInputsContainer">
-                        @foreach ($entry->approve_attachments as $attachment)
+                        @foreach ($attachments as $attachment)
                             <div class="upload-zone">
-                                <p>
-                                    Current File: <a href="{{ asset('storage/' . $attachment->file_path) }}"
-                                        target="_blank">
-                                        {{ basename($attachment->file_path) }}
+                                <input type="file" name="attachments[]" class="file-input"
+                                    accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" />
+
+                                <!-- Hidden input for existing attachment ID to retain it in the database -->
+                                <input type="hidden" name="existing_attachments[]" value="{{ $attachment->id }}" />
+
+                                <div>
+                                    <a href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank">
+                                        {{ $attachment->file_path }}
                                     </a>
-                                    <button type="button" class="btn-remove"
-                                        onclick="removeExistingAttachment(this, {{ $attachment->id }})">X</button>
-                                </p>
-                                <input type="hidden" name="existing_attachments[]" value="{{ $attachment->id }}">
+                                </div>
+
+                                <!-- Remove button (X) to delete the attachment -->
+                                <button type="button" class="btn-remove"
+                                    onclick="removeAttachment({{ $attachment->id }}, this)">X</button>
                             </div>
                         @endforeach
                     </div>
@@ -199,36 +206,39 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const fileInputsContainer = document.getElementById('fileInputsContainer'); // Container for file inputs
-            const addFileButton = document.getElementById('addFileButton'); // Button to add more file inputs
+            const fileInputsContainer = document.getElementById('fileInputsContainer');
+            const addFileButton = document.getElementById('addFileButton');
 
-            // Event listener for "Add Another File" button
+            // Add an event listener to the "Add Another File" button
             addFileButton.addEventListener('click', function () {
-                const newFileInput = document.createElement('div'); // Create a new div for the file input
-                newFileInput.classList.add('upload-zone'); // Add a class for styling
+                const newFileInput = document.createElement('div');
+                newFileInput.classList.add('upload-zone');
                 newFileInput.innerHTML = `
-                    <input type="file" name="attachments[]" class="file-input" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png">
-                    <button type="button" class="btn-remove" onclick="removeFileInput(this)">Remove</button>
-                `;
-                fileInputsContainer.appendChild(newFileInput); // Append the new input to the container
+            <input type="file" name="attachments[]" class="file-input" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png">
+            <button type="button" class="btn-remove" onclick="removeFileInput(this)">Remove</button>
+        `;
+                fileInputsContainer.appendChild(newFileInput);
             });
         });
 
-        // Function to handle removing a file input field
+        // Function to remove file input
         function removeFileInput(button) {
-            button.parentElement.remove(); // Remove the parent div of the "Remove" button
+            button.parentElement.remove();
         }
-        function removeExistingAttachment(button, attachmentId) {
-            // Remove the attachment's visual element
-            const uploadZone = button.parentElement.parentElement;
-            uploadZone.remove();
 
-            // Create a hidden input to mark this attachment for removal
-            const removalInput = document.createElement('input');
-            removalInput.type = 'hidden';
-            removalInput.name = 'attachments_to_remove[]';
-            removalInput.value = attachmentId;
-            document.getElementById('fileInputsContainer').appendChild(removalInput);
+        // Function to remove attachment and mark it for deletion
+        function removeAttachment(attachmentId, button) {
+            // This will add the attachment to the list of files to be removed
+            const removedInput = document.createElement('input');
+            removedInput.setAttribute('type', 'hidden');
+            removedInput.setAttribute('name', 'removed_attachments[]');  // Array to track removed files
+            removedInput.setAttribute('value', attachmentId);
+
+            // Append the hidden input to the form
+            document.querySelector('form').appendChild(removedInput);
+
+            // Remove the file display and remove button from the UI
+            button.closest('.upload-zone').remove();
         }
 
     </script>

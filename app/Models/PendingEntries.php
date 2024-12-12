@@ -17,6 +17,7 @@ class PendingEntries extends Model
         'attachment',
         'youtube_url',
         'created_by',
+        'user_id',
 
     ];
 
@@ -27,7 +28,7 @@ class PendingEntries extends Model
 
     public function attachments()
     {
-        return $this->hasMany(Attachment::class, 'pending_entry_id');
+        return $this->hasMany(Attachments::class, 'pending_entry_id');
     }
 
 }

@@ -193,9 +193,12 @@
 
                                 <td class="table-cell">
                                     <div class="action-buttons">
+                                        <!-- Review Button -->
                                         <a href="{{ route('show.pending', ['entry' => $entry->id]) }}"
                                             class="view-button">Review</a>
-                                        @if(auth()->user()->role !== 'staff') {{-- Only show for non-staff users --}}
+
+                                        <!-- Approve Button: Shown only for non-staff users -->
+                                        @if(auth()->user()->role !== 'staff')
                                             <form action="{{ route('entries.approve', $entry->id) }}" method="POST"
                                                 style="display: inline;">
                                                 @csrf
@@ -203,6 +206,13 @@
                                             </form>
                                         @endif
 
+                                        <!-- Edit Button: Shown only for staff users -->
+                                        @if(auth()->user()->role === 'staff')
+                                            <a href="{{ route('pending.entries.edit', $entry->id) }}"
+                                                class="edit-button">Edit</a>
+                                        @endif
+
+                                        <!-- Delete Button -->
                                         <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}"
                                             style="display: inline;">
                                             @csrf
@@ -214,6 +224,7 @@
                                         </form>
                                     </div>
                                 </td>
+
 
                             </tr>
                         @endforeach
