@@ -246,7 +246,7 @@
         }
 
         $videoId = getYoutubeId($url);
-    @endphp
+      @endphp
 
         @if($videoId)
       <div class="video-container">

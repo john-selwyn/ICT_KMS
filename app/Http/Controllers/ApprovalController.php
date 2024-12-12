@@ -46,11 +46,13 @@ class ApprovalController extends Controller
         // Handle the attachment files (upload to storage and save paths)
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $attachment) {
-                $filePath = $attachment->store('uploads', 'public');
+                $filePath = $attachment->store('uploads', 'public'); // Store the file in public/uploads
+                $originalName = $attachment->getClientOriginalName(); // Get the original file name
 
                 // Save attachment in the approve_attachments table
                 $entry->approve_attachments()->create([
-                    'file_path' => $filePath, // Store file path in the approve_attachments table
+                    'file_path' => $filePath, // Store file path
+                    'original_name' => $originalName, // Save the original file name
                 ]);
             }
         }
@@ -58,7 +60,8 @@ class ApprovalController extends Controller
         // Save the updated entry
         $entry->save();
 
-        return redirect()->route('entries.approves', ['entry' => $entry->id])->with('success', 'Entry updated successfully!');
+        return redirect()->route('entries.approves', ['entry' => $entry->id])
+            ->with('success', 'Entry updated successfully!');
     }
 
 

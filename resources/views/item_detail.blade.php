@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,15 +82,15 @@
             color: #999;
             font-style: italic;
         }
-
     </style>
 </head>
+
 <body>
 
     <div class="item-container">
         <div class="item-header">{{ $item->title }}</div>
 
-      
+
 
         <div class="item-section">
             <span class="label">Description:</span> {{ $item->description }}
@@ -99,23 +100,24 @@
             <span class="label">Attachment:</span>
             <div class="attachment-container">
                 @if ($item->attachment)
-                    @php
-                        $fileExtension = pathinfo($item->attachment, PATHINFO_EXTENSION);
-                    @endphp
-                    
-                    @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                        <img src="{{ Storage::url($item->attachment) }}" alt="Attachment Image">
-                    @elseif (in_array($fileExtension, ['pdf', 'doc', 'docx', 'xls', 'xlsx']))
-                        <a href="{{ Storage::url($item->attachment) }}" target="_blank">Download Attachment</a>
-                    @else
-                        <a href="{{ Storage::url($item->attachment) }}" target="_blank">View/Download Attachment</a>
-                    @endif
+                                @php
+                                    $fileExtension = pathinfo($item->attachment, PATHINFO_EXTENSION);
+                                @endphp
+
+                                @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                    <img src="{{ Storage::url($item->attachment) }}" alt="Attachment Image">
+                                @elseif (in_array($fileExtension, ['pdf', 'doc', 'docx', 'xls', 'xlsx']))
+                                    <a href="{{ Storage::url($item->attachment) }}" target="_blank">Download Attachment</a>
+                                @else
+                                    <a href="{{ Storage::url($item->attachment) }}" target="_blank">View/Download Attachment</a>
+                                @endif
                 @else
-                    <span class="no-attachment">No Attachment</span>
+                    <span class="no-attachment">No Athtachment</span>
                 @endif
             </div>
         </div>
     </div>
 
 </body>
+
 </html>

@@ -204,7 +204,7 @@
 
       <div class="entry-attachments">
         @if($entry->approve_attachments->isNotEmpty())
-      @foreach($entry->approve_attachments as $attachment)
+      @foreach ($entry->approve_attachments as $attachment)
       <a href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank" class="attachment-link">
       <svg class="attachment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -212,7 +212,7 @@
       <polyline points="7 10 12 15 17 10"></polyline>
       <line x1="12" y1="15" x2="12" y2="3"></line>
       </svg>
-      {{ basename($attachment->file_path) }}
+      {{ $attachment->original_name }}
       </a>
     @endforeach
     @else

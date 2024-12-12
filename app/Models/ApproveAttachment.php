@@ -16,6 +16,7 @@ class ApproveAttachment extends Model
     protected $fillable = [
         'file_path',        // Path to the stored file 
         'approve_entry_id', // Foreign key referencing approve_entries table
+        'original_name',
     ];
 
     /**
