@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="dashboard-container">
-        <!-- Search Bar -->
+        <!-- Search Bar 
         <div class="search-container">
             <div class="search-wrapper">
                 <input type="search" class="search-input" placeholder="Search knowledge system...">
@@ -16,6 +16,7 @@
                 </svg>
             </div>
         </div>
+    -->
 
         <!-- Stats Grid -->
         <div class="stats-grid">
@@ -94,7 +95,7 @@
             </a>
         </div>
 
-        <!-- Recent Activity -->
+        <!-- Recent Activity 
         @if(auth()->user()->role !== 'staff')
             <div class="activity-card">
                 <h3 class="activity-title">Recents Activity</h3>
@@ -115,6 +116,8 @@
             </div>
         @endif
     </div>
+-->
+
 
     <style>
         /* General Styles */

@@ -49,7 +49,7 @@
             }
 
             .trashed-entry-card {
-                background-color: #fef3f2;
+                background-color: #ffffff;
                 border-radius: 0.75rem;
                 padding: 1.25rem;
                 display: flex;
@@ -66,13 +66,13 @@
             .trashed-entry-title {
                 font-size: 1.125rem;
                 font-weight: 600;
-                color: #7f1d1d;
+                color: #060000;
                 margin-bottom: 0.75rem;
             }
 
             .trashed-entry-details {
                 font-size: 0.875rem;
-                color: #9f1239;
+                color: #0b0104;
                 margin-bottom: 1rem;
             }
 
@@ -153,7 +153,7 @@
                                     @csrf
                                     <button type="submit" class="btn btn-restore">Restore</button>
                                 </form>
-                                <form method="POST" action="{{ route('entries.delete', $entry->id) }}"
+                                <form method="POST" action="{{ route('trash.destroy', $entry->id) }}"
                                     style="display: contents;">
                                     @csrf
                                     @method('DELETE')

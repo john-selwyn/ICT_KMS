@@ -296,10 +296,12 @@
                 </div>
 
                 <button type="submit" class="btn animation">Login</button>
-
+                <!--
                 <div class="linkTxt animation">
                     <p>Don't have an account? <a href="{{ route('register') }}" class="register-link">Sign Up</a></p>
                 </div>
+
+            -->
             </form>
         </div>
 

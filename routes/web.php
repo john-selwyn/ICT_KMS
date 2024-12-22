@@ -81,6 +81,9 @@ Route::get('/approve_entries/trash', [ApprovalController::class, 'trashIndex'])-
 Route::post('/approve_entries/{entry}/restore', [ApprovalController::class, 'restore'])->name('entries.restore');
 Route::get('/trash/{id}', [TrashController::class, 'viewTrash'])->name('trash.view');
 
+Route::delete('/trash/{id}', [TrashController::class, 'destroy'])->name('trash.destroy');
+
+
 //User Pending Entries
 
 Route::get('/pending/entries/{entry}/edit', [EntriesController::class, 'entry_edit'])->name('pending.entries.edit');

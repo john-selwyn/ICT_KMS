@@ -20,7 +20,7 @@
     @if(auth()->user()->role === 'staff')
         <!-- Links visible only for staff -->
         <x-nav-link :href="route('entries.approves')" :active="request()->routeIs('entries.approves')" class="text-white hover:text-[#FFD700]">
-            {{ __('Approve Entries') }}
+            {{ __('Resources') }}
         </x-nav-link>
 
         <x-nav-link :href="route('entries.pending')" :active="request()->routeIs('entries.pending')" class="text-white hover:text-[#FFD700]">
