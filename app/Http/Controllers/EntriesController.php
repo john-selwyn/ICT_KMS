@@ -1,7 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+
+
 use App\Models\PendingEntries;
 use App\Models\Approval;
 use App\Models\Category;
@@ -47,46 +52,48 @@ class EntriesController extends Controller
 
 
     public function approve($id)
-    {
-        // Fetch the entry from pending_entries with attachments
-        $entry = PendingEntries::with('attachments')->find($id);
+{
+    // Fetch the pending entry with attachments and categories
+    $entry = PendingEntries::with('attachments', 'categories')->findOrFail($id);
 
-        // Check if the entry exists
-        if ($entry) {
-            // Move the entry to approve_entries table
-            $approvedEntry = Approval::create([
-                'title' => $entry->title,
-                'description' => $entry->description,
-                'category_id' => $entry->category_id,
-                'youtube_url' => $entry->youtube_url,
-                // 'thumbnail' => $entry->thumbnail, // Include if necessary
-            ]);
+    // Move the entry to the approved_entries table
+    $approvedEntry = Approval::create([
+        'title' => $entry->title,
+        'description' => $entry->description,
+        'youtube_url' => $entry->youtube_url,
+        // Add other necessary fields
+    ]);
 
-            // Check if there are attachments
-            if ($entry->attachments->isNotEmpty()) {
-                foreach ($entry->attachments as $attachment) {
-                    // Move attachments to approve_attachments table
-                    ApproveAttachment::create([
-                        'approve_entry_id' => $approvedEntry->id,
-                        'file_path' => $attachment->file_path,
-                        'original_name' => $attachment->original_name, // Ensure the original name is also transferred
-                    ]);
-
-                    // Optionally, delete the attachment from the attachments table
-                    $attachment->delete();
-                }
-            }
-
-            // Delete the entry from pending_entries
-            $entry->delete();
-
-            // Redirect with success message
-            return redirect()->route('entries.approves')->with('success', 'Entry approved successfully.');
-        } else {
-            // Redirect with error message if entry not found
-            return redirect()->back()->with('error', 'Entry not found!');
-        }
+    // Transfer categories
+    foreach ($entry->categories as $category) {
+        DB::table('category_entry')->insert([
+            'category_id' => $category->id,
+            'approved_entries_id' => $approvedEntry->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
+
+    // Transfer attachments
+    foreach ($entry->attachments as $attachment) {
+        ApproveAttachment::create([
+            'approve_entry_id' => $approvedEntry->id,
+            'file_path' => $attachment->file_path,
+            'original_name' => $attachment->original_name,
+        ]);
+
+        $attachment->delete(); // Optionally delete the attachment
+    }
+
+    // Delete category relationships for the pending entry
+    DB::table('category_entry')->where('pending_entries_id', $entry->id)->delete();
+
+    // Delete the pending entry
+    $entry->delete();
+
+    return redirect()->route('entries.approves')->with('success', 'Entry approved successfully.');
+}
+
 
 
 
@@ -133,49 +140,75 @@ class EntriesController extends Controller
         return view('create', compact('categories'));
     }
 
+
+
     public function store(Request $request)
-    {
-        // Validate request data
-        $validatedData = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'category_id' => 'required|exists:categories,id',
-            'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,zip|max:204800', // Validate each file
-            'youtube_url' => 'nullable|url',
-        ]);
+{
+    // Validate request data
+    $validatedData = $request->validate([
+        'title' => 'required',
+        'description' => 'required',
+        'categories' => 'required|array',
+        'categories.*' => 'exists:categories,id',
+        'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,zip|max:204800',
+        'youtube_url' => 'nullable|url',
+    ]);
 
-        // Create pending entry with the logged-in user's ID
-        $pendingEntry = PendingEntries::create([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'category_id' => $validatedData['category_id'],
-            'youtube_url' => $validatedData['youtube_url'] ?? null,
-            'created_by' => Auth::id(), // Save the creator's ID
-            'user_id' => Auth::id(), // Save the creator's ID
-        ]);
+    // Check if the title already exists in approved entries
+    $duplicateTitle = Approval::where('title', $validatedData['title'])->first();
 
-        // Handle multiple file uploads
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $filePath = $file->storeAs(
-                    'uploads', // Directory
-                    $file->getClientOriginalName(), // Use original filename
-                    'public' // Storage disk
-                );
+    // Check if the description already exists in approved entries
+    $duplicateDescription = Approval::where('description', $validatedData['description'])->first();
 
-                // Save each file in the attachments table, including the original name
-                Attachments::create([
-                    'pending_entry_id' => $pendingEntry->id, // Link to pending entry
-                    'file_path' => $filePath, // File path
-                    'original_name' => $file->getClientOriginalName(), // Save original file name
-                ]);
-            }
-        }
-
-
-        // Redirect to pending entries list with success message
-        return redirect(route('entries.pending'))->with('success', 'Entry created successfully!');
+    // If the title exists
+    if ($duplicateTitle) {
+        return redirect()->back()->withErrors([
+            'error' => 'An entry with the same title already exists in approved entries.',
+        ])->withInput();
     }
+
+    // If the description exists
+    if ($duplicateDescription) {
+        return redirect()->back()->withErrors([
+            'error' => 'An entry with the same description already exists in approved entries.',
+        ])->withInput();
+    }
+
+    // Create the pending entry
+    $pendingEntry = PendingEntries::create([
+        'title' => $validatedData['title'],
+        'description' => $validatedData['description'],
+        'youtube_url' => $validatedData['youtube_url'] ?? null,
+        'created_by' => Auth::id(),
+        'user_id' => Auth::id(),
+    ]);
+
+    // Attach multiple categories to the pending entry
+    $pendingEntry->categories()->attach($validatedData['categories']);
+
+    // Handle multiple file uploads
+    if ($request->hasFile('attachments')) {
+        foreach ($request->file('attachments') as $file) {
+            $filePath = $file->storeAs(
+                'uploads',
+                $file->getClientOriginalName(),
+                'public'
+            );
+
+            Attachments::create([
+                'pending_entry_id' => $pendingEntry->id,
+                'file_path' => $filePath,
+                'original_name' => $file->getClientOriginalName(),
+            ]);
+        }
+    }
+
+    // Redirect to pending entries list with success message
+    return redirect(route('entries.pending'))->with('success', 'Entry created successfully!');
+}
+
+    
+
 
 
 

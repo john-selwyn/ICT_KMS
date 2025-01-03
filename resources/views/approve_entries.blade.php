@@ -243,7 +243,7 @@
 
     <body>
         <main>
-            <h1 class="page-title">Approve Entries</h1>
+            <h1 class="page-title">Approvse Entries</h1>
 
             @if(session()->has('success'))
                 <div class="success-alert">

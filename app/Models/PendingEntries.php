@@ -31,4 +31,11 @@ class PendingEntries extends Model
         return $this->hasMany(Attachments::class, 'pending_entry_id');
     }
 
+    public function categories()
+{
+    return $this->belongsToMany(Category::class, 'category_entry', 'pending_entries_id', 'category_id');
+}
+
+
+
 }

@@ -26,6 +26,19 @@ class Category extends Model
         return $this->hasMany(Approval::class);
     }
 
+
+    public function anotherpendingEntries()
+    {
+        return $this->belongsToMany(PendingEntries::class, 'category_entry', 'category_id', 'pending_entries_id');
+    }
+    
+    public function approvedEntries()
+    {
+        return $this->belongsToMany(Approval::class, 'category_entry', 'category_id', 'approved_entries_id');
+    }
+    
+
+
     public function items()
     {
         return $this->hasMany(Approval::class, 'category_id');

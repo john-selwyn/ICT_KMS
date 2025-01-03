@@ -25,13 +25,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="category">Csategory</label>
-                    <select id="category" name="category_id">
+                    <label for="categories">Categories</label>
+                    <select id="categories" name="categories[]" multiple class="form-control">
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
+                    <small class="form-text text-muted">Hold down the Ctrl (Windows) or Command (Mac) key to select multiple categories.</small>
                 </div>
+                
 
                 
 

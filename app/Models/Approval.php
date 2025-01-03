@@ -38,4 +38,10 @@ class Approval extends Model
     {
         return $this->hasMany(ApproveAttachment::class, 'approve_entry_id');
     }
+
+    public function categories()
+{
+    return $this->belongsToMany(Category::class, 'category_entry', 'approved_entries_id', 'category_id');
+}
+
 }
