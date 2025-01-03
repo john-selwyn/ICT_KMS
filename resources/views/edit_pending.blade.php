@@ -29,15 +29,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="category">Category</label>
-                    <select id="category" name="category_id">
+                    <label for="categories">Categories</label>
+                    <select id="categories" name="categories[]" multiple required>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" {{ $entry->category_id == $category->id ? 'selected' : '' }}>
+                            <option value="{{ $category->id }}" {{ in_array($category->id, old('categories', $entry->categories->pluck('id')->toArray())) ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
                         @endforeach
                     </select>
+                    <small>Select one or more categories</small>
                 </div>
+
 
                 <div class="form-group">
                     <label>Attachments</label>

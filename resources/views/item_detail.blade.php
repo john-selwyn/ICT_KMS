@@ -112,7 +112,7 @@
                                     <a href="{{ Storage::url($item->attachment) }}" target="_blank">View/Download Attachment</a>
                                 @endif
                 @else
-                    <span class="no-attachment">No Athtachment</span>
+                    <span class="no-attachment">No Attachment</span>
                 @endif
             </div>
         </div>

@@ -213,10 +213,10 @@
                                         @endif
 
                                         <!-- Edit Button: Shown only for staff users -->
-                                        @if(auth()->user()->role === 'staff')
-                                            <a href="{{ route('pending.entries.edit', $entry->id) }}"
-                                                class="edit-button">Edit</a>
-                                        @endif
+
+                                        <a href="{{ route('pending.entries.edit', $entry->id) }}"
+                                            class="edit-button">Edit</a>
+
 
                                         <!-- Delete Button -->
                                         <form method="POST" action="{{ route('entries.delete', ['entries' => $entry]) }}"
