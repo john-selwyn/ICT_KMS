@@ -11,7 +11,9 @@ class ApprovalController extends Controller
 {
     public function show($entry)
     {
+
         $entry = Approval::with('category')->findOrFail($entry);
+        $entry->increment('views');
         return view('show', compact('entry'));
     }
 
@@ -35,6 +37,8 @@ class ApprovalController extends Controller
             'description' => 'nullable|string',
             'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,zip', // Validate multiple attachments
             'youtube_url' => 'nullable|url',
+            'categories' => 'required|array', // Validate categories as an array
+            'categories.*' => 'exists:categories,id', // Validate that each category exists
         ]);
 
         // Find the entry to update
@@ -57,12 +61,16 @@ class ApprovalController extends Controller
             }
         }
 
+        // Update the categories for this entry
+        $entry->categories()->sync($request->categories);
+
         // Save the updated entry
         $entry->save();
 
         return redirect()->route('entries.approves', ['entry' => $entry->id])
             ->with('success', 'Entry updated successfully!');
     }
+
 
 
     public function destroy($entry)

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\New_EntryController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\TrashController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,7 +120,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 
-
+//Reports
+Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+Route::post('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 
 //Edit user
 

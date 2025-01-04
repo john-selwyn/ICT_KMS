@@ -47,6 +47,9 @@
         <x-nav-link :href="route('entries.trash.index')" :active="request()->routeIs('entries.trash.index')" class="text-white hover:text-[#FFD700]">
             {{ __('Trash') }}
         </x-nav-link>
+        <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')" class="text-white hover:text-[#FFD700]">
+            {{ __('Reports') }}
+        </x-nav-link>
     @endif
 </div>
 
