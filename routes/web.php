@@ -12,6 +12,9 @@ use App\Http\Controllers\New_EntryController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\TrashController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\FAQController;
+use App\Http\Controllers\AuditTrailController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -123,6 +126,24 @@ Route::middleware(['auth', 'admin'])->group(function () {
 //Reports
 Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 Route::post('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+
+//FAQs
+// FAQs
+Route::get('/faqs', [FAQController::class, 'index'])->name('faqs.index');
+Route::get('/faqs/create', [FAQController::class, 'create'])->name('faqs.create');
+Route::post('/faqs', [FAQController::class, 'store'])->name('faqs.store');
+Route::get('/faqs/{id}/edit', [FAQController::class, 'edit'])->name('faqs.edit');
+Route::put('/faqs/{id}', [FAQController::class, 'update'])->name('faqs.update');
+Route::delete('/faqs/{id}', [FAQController::class, 'destroy'])->name('faqs.destroy');
+
+
+
+Route::middleware(['auth', 'super-admin'])->group(function () {
+    Route::get('/audit-trails', [AuditTrailController::class, 'index'])->name('audit-trails.index');
+});
+
+
+
 
 //Edit user
 

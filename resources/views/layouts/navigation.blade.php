@@ -50,6 +50,14 @@
         <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')" class="text-white hover:text-[#FFD700]">
             {{ __('Reports') }}
         </x-nav-link>
+        <x-nav-link :href="route('faqs.index')" :active="request()->routeIs('faqs.index')" class="text-white hover:text-[#FFD700]">
+            {{ __('FAQs') }}
+        </x-nav-link>
+        @elseif(auth()->user()->role === 'super-admin')
+        <x-nav-link :href="route('audit-trails.index')" :active="request()->routeIs('audit-trails.index')" class="text-white hover:text-[#FFD700]">
+            {{ __('Audit Trails') }}
+        </x-nav-link>
+
     @endif
 </div>
 

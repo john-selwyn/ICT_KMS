@@ -1,9 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\AuditTrail;
+use App\Http\Controllers\AuditTrailController;
+use Illuminate\Support\Facades\Log;
+
+
 class UserController extends Controller
 {
     public function index()
@@ -12,13 +19,11 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    // Show form for creating a new user
     public function create()
     {
         return view('admin.users.create');
     }
 
-    // Store a new user
     public function store(Request $request)
     {
         $request->validate([
@@ -36,13 +41,11 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
-    // Show form for editing a user
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));
     }
 
-    // Update user details
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -63,12 +66,33 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
-    // Delete a user
+    // File: app/Http/Controllers/UserController.php
+
+
+
     public function destroy(User $user)
     {
+        // Capture user details if needed for the audit trail
+        $userId = $user->id;  // Capture ID before deletion
+        $userName = $user->name;  // Example: capturing the name if needed
+
+        // Log the deletion action before deleting the user
+        AuditTrailController::log('Deleted user', auth()->id(), $userId);
+
+        // Additional details can be logged as needed
+        // AuditTrailController::log('Deleted user ' . $userName, auth()->id(), $userId);
+
+        // Delete the user
         $user->delete();
+
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
+
+
+
+
+
+
 
     public function promote(User $user)
     {
@@ -76,9 +100,14 @@ class UserController extends Controller
             return back()->with('message', 'User is already an admin.');
         }
 
-        // Update user role to a higher level, e.g., 'admin'
-        $user->role = 'admin'; // or however your roles are structured
+        $user->role = 'admin';
         $user->save();
+
+        AuditTrail::create([
+            'action' => 'Promoted user to admin',
+            'performed_by' => Auth::id(),
+            'affected_user_id' => $user->id,
+        ]);
 
         return back()->with('success', 'User promoted successfully.');
     }
@@ -89,12 +118,15 @@ class UserController extends Controller
             return back()->with('message', 'User is already at the lowest role.');
         }
 
-
-        // Update user role to a lower level, e.g., 'user'
         $user->role = 'staff';
         $user->save();
 
+        AuditTrail::create([
+            'action' => 'Demoted user to staff',
+            'performed_by' => Auth::id(),
+            'affected_user_id' => $user->id,
+        ]);
+
         return back()->with('success', 'User demoted successfully.');
     }
-
 }

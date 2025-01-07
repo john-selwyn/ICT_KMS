@@ -19,6 +19,7 @@ class Approval extends Model
         'attachment',
         'youtube_url',
         'thumbnail',
+        'views',
     ];
 
     protected $dates = ['deleted_at']; // To handle soft delete timestamps
@@ -40,8 +41,8 @@ class Approval extends Model
     }
 
     public function categories()
-{
-    return $this->belongsToMany(Category::class, 'category_entry', 'approved_entries_id', 'category_id');
-}
+    {
+        return $this->belongsToMany(Category::class, 'category_entry', 'approved_entries_id', 'category_id');
+    }
 
 }

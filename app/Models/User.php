@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',  // Added role to fillable attributes
     ];
 
     /**
@@ -43,15 +43,33 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    //Add by me
+    /**
+     * Check if the user is an admin.
+     *
+     * @return bool
+     */
     public function isAdmin()
     {
-    return $this->role === 'admin';
+        return $this->role === 'admin';
     }
 
+    /**
+     * Check if the user is a staff member.
+     *
+     * @return bool
+     */
     public function isStaff()
     {
-    return $this->role === 'staff';
+        return $this->role === 'staff';
     }
 
+    /**
+     * Check if the user is a super admin.
+     *
+     * @return bool
+     */
+    public function isSuperAdmin()
+    {
+        return $this->role === 'super-admin';
+    }
 }
