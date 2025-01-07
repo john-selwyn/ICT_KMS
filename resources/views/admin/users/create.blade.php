@@ -1,6 +1,16 @@
 <x-app-layout>
     <div class="container mx-auto">
         <h1 class="text-2xl font-bold mb-6">Add New User</h1>
+        @if ($errors->any())
+    <div class="text-red-500">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 
         <form action="{{ route('users.store') }}" method="POST">
             @csrf

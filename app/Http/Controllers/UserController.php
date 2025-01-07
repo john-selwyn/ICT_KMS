@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\AuditTrail;
 use App\Http\Controllers\AuditTrailController;
-use Illuminate\Support\Facades\Log;
-
 
 class UserController extends Controller
 {
@@ -32,11 +30,14 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Log the creation action
+        AuditTrailController::log('Created a new user', auth()->id(), $user->id);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -54,6 +55,10 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
+        // Capture original details before updating
+        $originalName = $user->name;
+        $originalEmail = $user->email;
+
         $user->name = $request->name;
         $user->email = $request->email;
 
@@ -63,36 +68,25 @@ class UserController extends Controller
 
         $user->save();
 
+        // Log the update action
+        AuditTrailController::log(
+            "Updated user details (Name: $originalName to {$user->name}, Email: $originalEmail to {$user->email})",
+            auth()->id(),
+            $user->id
+        );
+
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
-    // File: app/Http/Controllers/UserController.php
-
-
-
     public function destroy(User $user)
     {
-        // Capture user details if needed for the audit trail
-        $userId = $user->id;  // Capture ID before deletion
-        $userName = $user->name;  // Example: capturing the name if needed
-
         // Log the deletion action before deleting the user
-        AuditTrailController::log('Deleted user', auth()->id(), $userId);
+        AuditTrailController::log('Deleted user', auth()->id(), $user->id);
 
-        // Additional details can be logged as needed
-        // AuditTrailController::log('Deleted user ' . $userName, auth()->id(), $userId);
-
-        // Delete the user
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
-
-
-
-
-
-
 
     public function promote(User $user)
     {
@@ -103,11 +97,8 @@ class UserController extends Controller
         $user->role = 'admin';
         $user->save();
 
-        AuditTrail::create([
-            'action' => 'Promoted user to admin',
-            'performed_by' => Auth::id(),
-            'affected_user_id' => $user->id,
-        ]);
+        // Log the promotion action
+        AuditTrailController::log('Promoted user to admin', auth()->id(), $user->id);
 
         return back()->with('success', 'User promoted successfully.');
     }
@@ -121,11 +112,8 @@ class UserController extends Controller
         $user->role = 'staff';
         $user->save();
 
-        AuditTrail::create([
-            'action' => 'Demoted user to staff',
-            'performed_by' => Auth::id(),
-            'affected_user_id' => $user->id,
-        ]);
+        // Log the demotion action
+        AuditTrailController::log('Demoted user to staff', auth()->id(), $user->id);
 
         return back()->with('success', 'User demoted successfully.');
     }
