@@ -56,32 +56,49 @@
             background-color: #3547d3;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
 
-            h1 {
-                font-size: 2rem;
-            }
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+        }
 
-            h3 {
-                font-size: 1.25rem;
-            }
-
-            canvas {
-                max-height: 300px;
-            }
+        th {
+            background-color: #f4f4f4;
+            font-weight: 600;
         }
     </style>
 
     <div class="container">
         <h1>Category Report</h1>
 
-        <!-- Category Chart -->
+        <!-- Category Table -->
         <div>
             <h3>Entries by Category</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Resources</th>
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($categoryData as $category)
+                        <tr>
+                            <td>{{ $category->name }}</td>
+                            <td>{{ $category->approved_entries_count }}</td>
+                            
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
             <canvas id="categoryChart"></canvas>
         </div>
 
@@ -104,14 +121,30 @@
             // Category Chart
             const categoryCtx = document.getElementById('categoryChart').getContext('2d');
             new Chart(categoryCtx, {
-                type: 'pie',
+                type: 'bar',
                 data: {
-                    labels: @json($categoryData->pluck('category.name')),
-                    datasets: [{
-                        label: 'Entries',
-                        data: @json($categoryData->pluck('count')),
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-                    }]
+                    labels: @json($categoryData->pluck('name')),
+                    datasets: [
+                        {
+                            label: 'Resources',
+                            data: @json($categoryData->pluck('approved_entries_count')),
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        },
+                        /*
+                        {
+                            label: 'Pending Entries',
+                            data: @json($categoryData->pluck('pending_entries_count')),
+                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        }
+                            */
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { stacked: true },
+                        y: { beginAtZero: true }
+                    }
                 }
             });
 
@@ -124,24 +157,13 @@
                     datasets: [{
                         label: 'Views',
                         data: @json($popularEntries->pluck('views')),
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: {
-                        legend: { display: false },
-                    },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Views' }
-                        },
-                        x: {
-                            title: { display: true, text: 'Entries' }
-                        }
+                        y: { beginAtZero: true }
                     }
                 }
             });
