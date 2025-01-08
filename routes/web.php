@@ -149,6 +149,8 @@ Route::middleware(['auth', 'super-admin'])->group(function () {
 
 Route::post('/users/{user}/promote', [UserController::class, 'promote'])->name('users.promote');
 Route::post('/users/{user}/demote', [UserController::class, 'demote'])->name('users.demote');
+Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
+
 
 
 //Profile

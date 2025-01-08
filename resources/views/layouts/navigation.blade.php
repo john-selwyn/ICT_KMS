@@ -4,12 +4,9 @@
         <div class="flex justify-between h-16 items-center">
             <!-- Logo -->
             <!-- Logo Section -->
-<div class="shrink-0 flex items-center">
-    <a href="{{ route('dashboard') }}">
-        <!-- Adjust height and width here -->
-        <x-application-logo class="block h-100 w-100 fill-current text-[#FFD700]" />
-    </a>
-</div>
+
+
+
 
 
             <!-- Navigation Links -->
@@ -22,9 +19,7 @@
                     <x-nav-link :href="route('entries.approves')" :active="request()->routeIs('entries.approves')" class="text-white hover:text-[#FFD700] transition duration-150">
                         {{ __('Resources') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('entries.pending')" :active="request()->routeIs('entries.pending')" class="text-white hover:text-[#FFD700] transition duration-150">
-                        {{ __('Pending Entries') }}
-                    </x-nav-link>
+                    
                 @elseif(auth()->user()->role === 'admin')
                     <x-nav-link :href="route('entries.approves')" :active="request()->routeIs('entries.approves')" class="text-white hover:text-[#FFD700] transition duration-150">
                         {{ __('Resources') }}

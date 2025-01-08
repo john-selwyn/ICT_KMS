@@ -13,7 +13,7 @@
 
             <form method="POST" action="{{ route('entries.store') }}" enctype="multipart/form-data">
                 @csrf
-                
+
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input type="text" id="title" name="title" placeholder="Enter title" required>
@@ -31,19 +31,21 @@
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
-                    <small class="form-text text-muted">Hold down the Ctrl (Windows) or Command (Mac) key to select multiple categories.</small>
+                    <small class="form-text text-muted">Hold down the Ctrl (Windows) or Command (Mac) key to select
+                        multiple categories.</small>
                 </div>
-                
 
-                
 
-                
+
+
+
 
                 <div class="form-group">
                     <label>Attachments</label>
                     <div id="fileInputsContainer">
                         <div class="upload-zone">
-                            <input type="file" name="attachments[]" class="file-input" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png">
+                            <input type="file" name="attachments[]" class="file-input"
+                                accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png">
                         </div>
                     </div>
                     <button type="button" id="addFileButton" class="btn-secondary">Add Another File</button>
@@ -51,7 +53,8 @@
 
                 <div class="form-group">
                     <label for="youtube_url">YouTube URL</label>
-                    <input type="url" name="youtube_url" id="youtube_url" placeholder="https://youtube.com/..." value="{{ old('youtube_url', $entries->youtube_url ?? '') }}">
+                    <input type="url" name="youtube_url" id="youtube_url" placeholder="https://youtube.com/..."
+                        value="{{ old('youtube_url', $entries->youtube_url ?? '') }}">
                 </div>
 
                 <button type="submit">Create Entry</button>
@@ -95,7 +98,9 @@
             color: #333;
         }
 
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;

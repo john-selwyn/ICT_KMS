@@ -243,7 +243,7 @@
 
     <body>
         <main>
-            <h1 class="page-title">Approvse Entries</h1>
+            <h1 class="page-title">Resources</h1>
 
             @if(session()->has('success'))
                 <div class="success-alert">
@@ -288,13 +288,13 @@
                             <a href="{{ route('entries.show', $entry->id) }}" class="btn btn-view">View</a>
 
                             @if(auth()->user()->role !== 'staff')
-                            <a href="{{ route('entries.edit', $entry->id) }}" class="btn btn-edit">Edit</a>
-                            <form method="POST" action="{{ route('entries.trash', $entry->id) }}"
-                                style="display: contents;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-delete">Move To Trash</button>
-                            </form>
+                                <a href="{{ route('entries.edit', $entry->id) }}" class="btn btn-edit">Edit</a>
+                                <form method="POST" action="{{ route('entries.trash', $entry->id) }}"
+                                    style="display: contents;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-delete">Move To Trash</button>
+                                </form>
                             @endif
                         </div>
                     </div>

@@ -117,4 +117,32 @@ class UserController extends Controller
 
         return back()->with('success', 'User demoted successfully.');
     }
+
+    public function updateRole(Request $request, $id)
+    {
+        // Validate the role input
+        $request->validate([
+            'role' => 'required|in:admin,staff',
+        ]);
+
+        // Find the user by ID
+        $user = User::findOrFail($id);
+
+        // Capture original role before updating
+        $originalRole = $user->role;
+
+        // Update the user's role
+        $user->role = $request->input('role');
+        $user->save();
+
+        // Log the role update action
+        AuditTrailController::log(
+            "Updated user role from $originalRole to {$user->role}",
+            auth()->id(),
+            $user->id
+        );
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'User role updated successfully!');
+    }
 }

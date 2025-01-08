@@ -1,21 +1,20 @@
 <x-app-layout>
     <style>
-        .promote-button {
-            background-color: #28a745;
-            color: white;
-            border: none;
+        .promote-button,
+        .demote-button {
             padding: 8px 12px;
             border-radius: 4px;
             cursor: pointer;
+            color: white;
+            border: none;
+        }
+
+        .promote-button {
+            background-color: #28a745;
         }
 
         .demote-button {
             background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
         }
 
         .info-message {
@@ -29,10 +28,6 @@
         }
     </style>
 
-
-
-
-
     @if(session()->has('message'))
         <div class="info-message">
             {{ session('message') }}
@@ -45,7 +40,6 @@
         </div>
     @endif
 
-    <!-- Main Content -->
     <div class="container mx-auto py-8 px-4">
         @if(session('success'))
             <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-r shadow-sm">
@@ -81,7 +75,6 @@
                             <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Name</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Email</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Role</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Rolse_Level</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-blue-800">Actions</th>
                         </tr>
                     </thead>
@@ -91,34 +84,26 @@
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $user->id }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $user->name }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $user->email }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">{{ $user->role }}</td>
-                                <td class="px-6 py-4 text-sm space-x-3">
-
-                                    <form action="{{ route('users.promote', $user->id) }}" method="POST"
-                                        style="display: inline;">
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    <form action="{{ route('users.updateRole', $user->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="promote-button">Promote</button>
-                                    </form>
-
-                                    <form action="{{ route('users.demote', $user->id) }}" method="POST"
-                                        style="display: inline;">
-                                        @csrf
-                                        <button type="submit" class="demote-button">Demote</button>
+                                        @method('PATCH')
+                                        <select name="role" onchange="this.form.submit()">
+                                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin
+                                            </option>
+                                            <option value="staff" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff
+                                            </option>
+                                        </select>
                                     </form>
                                 </td>
                                 <td class="px-6 py-4 text-sm space-x-3">
-
                                     <a href="{{ route('users.edit', $user) }}"
-                                        class="text-blue-600 hover:text-blue-800 font-medium">
-                                        Edit
-                                    </a>
+                                        class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
                                     <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-800 font-medium"
-                                            onclick="return confirm('Are you sure you want to delete this user?')">
-                                            Delete
-                                        </button>
+                                            onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
                                     </form>
                                 </td>
                             </tr>
@@ -127,6 +112,5 @@
                 </table>
             </div>
         </div>
-    </div>
     </div>
 </x-app-layout>
