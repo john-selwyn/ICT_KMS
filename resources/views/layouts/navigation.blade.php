@@ -18,6 +18,9 @@
                 @if(auth()->user()->role === 'staff')
                     <x-nav-link :href="route('entries.approves')" :active="request()->routeIs('entries.approves')" class="text-white hover:text-[#FFD700] transition duration-150">
                         {{ __('Resources') }}
+                        <x-nav-link :href="route('faqs.index')" :active="request()->routeIs('faqs.index')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('FAQs') }}
+                    </x-nav-link>
                     </x-nav-link>
                     
                 @elseif(auth()->user()->role === 'admin')
@@ -36,15 +39,35 @@
                     <x-nav-link :href="route('entries.trash.index')" :active="request()->routeIs('entries.trash.index')" class="text-white hover:text-[#FFD700] transition duration-150">
                         {{ __('Trash') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')" class="text-white hover:text-[#FFD700] transition duration-150">
-                        {{ __('Reports') }}
-                    </x-nav-link>
+                    
                     <x-nav-link :href="route('faqs.index')" :active="request()->routeIs('faqs.index')" class="text-white hover:text-[#FFD700] transition duration-150">
                         {{ __('FAQs') }}
                     </x-nav-link>
                 @elseif(auth()->user()->role === 'super-admin')
+                <x-nav-link :href="route('entries.approves')" :active="request()->routeIs('entries.approves')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('Resources') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('entries.pending')" :active="request()->routeIs('entries.pending')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('Pending Entries') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('Categories') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('Accounts') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('entries.trash.index')" :active="request()->routeIs('entries.trash.index')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('Trash') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link :href="route('faqs.index')" :active="request()->routeIs('faqs.index')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('FAQs') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('audit-trails.index')" :active="request()->routeIs('audit-trails.index')" class="text-white hover:text-[#FFD700] transition duration-150">
                         {{ __('Audit Trails') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')" class="text-white hover:text-[#FFD700] transition duration-150">
+                        {{ __('Reports') }}
                     </x-nav-link>
                 @endif
             </div>

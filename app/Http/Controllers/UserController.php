@@ -13,7 +13,16 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $currentUser = auth()->user();
+
+        // If the current user is a Super Admin, show all users
+        if ($currentUser->role === 'super-admin') {
+            $users = User::all();
+        } else {
+            // If the current user is not a Super Admin, exclude Super Admin users
+            $users = User::where('role', '!=', 'super-admin')->get();
+        }
+
         return view('admin.users.index', compact('users'));
     }
 

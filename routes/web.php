@@ -118,7 +118,7 @@ Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])-
 
 
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'role:admin,super-admin'])->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
 });
 

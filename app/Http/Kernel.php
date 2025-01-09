@@ -25,6 +25,8 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         // Other middlewares
         'super-admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
+
     ];
 
 
